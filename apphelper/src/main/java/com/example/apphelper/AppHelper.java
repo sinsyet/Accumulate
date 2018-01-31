@@ -133,4 +133,5 @@ public class AppHelper {
         float f = ((fraction - startIndex * ratio) / ratio);
         return getFloatFractionValue(value[startIndex], value[endIndex], f);
     }
+
 }
