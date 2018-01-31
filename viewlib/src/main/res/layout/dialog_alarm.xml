@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:gravity="center_horizontal"
+    android:background="@drawable/shape_round_white"
+    android:layout_height="match_parent">
+<!--android:layout_marginTop="20dp"-->
+    <ImageView
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ajb_alarm"
+        />
+
+    <TextView
+        android:id="@+id/tv_alarm_liveinfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="XX小区-3栋3单元-0110"
+        android:textStyle="bold"
+        />
+
+    <TextView
+        android:id="@+id/tv_alarm_alarmtype"
+        android:layout_marginTop="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="移动侦测报警"
+        android:textStyle="bold"
+        android:textColor="#f00"
+        />
+
+    <TextView
+        android:id="@+id/tv_alarm_date"
+        android:textColor="#999999"
+        android:text="2017-Nov-02 12:34:56"
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#eff2f8"
+        />
+
+    <TextView
+        android:id="@+id/tv_alarm_iknown"
+        android:text="知道了"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="#2c99ff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</LinearLayout>
