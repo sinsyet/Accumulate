@@ -113,25 +113,25 @@ public class AppHelper {
         return startValue + ((endValue - startValue) * fraction);
     }
 
-    public static float getFloatFractionValue2(float fraction, float... value) {
+    /**
+     * 根据fraction从可变数组中取出对应的值
+     * @param fraction 比例
+     * @param values 可变数组值
+     * @return 百分比对应的值
+     */
+    public static float getValue(float fraction, float...values){
+        if(values.length == 0) return 0;
+        if(values.length == 1) return values[0];
 
-        int length = value.length;
-        if (length == 0) return 0;
-        if (length == 1) return value[0];
+        // fraction == 1f的时候, 会造成下面的计算index + 1超出范围
+        if(fraction == 1f) return values[values.length - 1];
+        // fraction: 0.23 1 2 3 2 1
+        float gp = 1f / (values.length - 1);    // 0.25
+        int index = (int) (fraction / gp);      // 0;
+        float section_start = values[index];    // 1
+        float section_end = values[index + 1];  // 2
+        float section_fraction = (fraction - index * gp) / gp; // 0.23
 
-        // 3个数的时候, 只有2个区间
-        int len = length - 1;
-
-        // ratio表示每段区间分布的比例大小
-        float ratio = 1.0f / len;
-
-        // 获得区间开始索引
-        int startIndex = (int) (fraction / ratio);
-        int endIndex = startIndex + 1;
-
-        // 获得fraction在ratio中的比例
-        float f = ((fraction - startIndex * ratio) / ratio);
-        return getFloatFractionValue(value[startIndex], value[endIndex], f);
+        return getFloatFractionValue(section_start,section_end,section_fraction);
     }
-
 }
