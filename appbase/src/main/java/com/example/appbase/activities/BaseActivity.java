@@ -1,30 +1,22 @@
 package com.example.appbase.activities;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
-import com.example.demo.receivers.NetStatusBroadcast;
+import com.example.apphelper.NetStatus;
 
 
-public class BaseActivity extends AppCompatActivity implements NetStatusBroadcast.Callback {
+public class BaseActivity extends AppCompatActivity implements NetStatus.Callback{
 
     private static final String TAG = "BaseActivity";
 
-    @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e(TAG, "onCreate: ");
-        NetStatusBroadcast.registerNoRepeat();
-        NetStatusBroadcast.subscribe(this);
+        NetStatus.attachContext(getApplicationContext());
+        NetStatus.subscribe(this);
     }
 
     @Override
@@ -33,8 +25,14 @@ public class BaseActivity extends AppCompatActivity implements NetStatusBroadcas
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        NetStatus.unSubscribe(this);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        NetStatusBroadcast.unSubscribe(this);
+
     }
 }

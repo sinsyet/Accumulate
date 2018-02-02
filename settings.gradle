@@ -1,1 +1,1 @@
-include ':app', ':viewlib', ':apphelper', ':sample', ':ndklib'
+include ':app', ':viewlib', ':apphelper', ':sample', ':ndklib', ':appbase'

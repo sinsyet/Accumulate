@@ -8,8 +8,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ProgressBar;
 
-import com.example.demo.R;
-import com.example.demo.views.drawable.Circle;
+import com.example.viewlib.R;
 
 
 public class SimpleLoadLayout extends LoadLayout {
@@ -26,19 +25,22 @@ public class SimpleLoadLayout extends LoadLayout {
             if (l == null) {
                 return;
             }
-            switch (v.getId()) {
-                case R.id.loadempty_ll:
-                    l.onReLoadClick(OnLoadActionListener.RELOAD_4_EMPTY);
-                    break;
-                case R.id.servererror_btn_reload:
-                    l.onReLoadClick(OnLoadActionListener.RELOAD_4_SERVERERROR);
-                    break;
-                case R.id.netdisable_btn_checknet:
-                    l.onCheckNet();
-                    break;
-                case R.id.netdisable_btn_refresh:
-                    l.onReLoadClick(OnLoadActionListener.RELOAD_4_NETDISABLE);
-                    break;
+
+            int id = v.getId();
+            if(id == R.id.loadempty_ll){
+                l.onReLoadClick(OnLoadActionListener.RELOAD_4_EMPTY);
+            }
+
+            else if(id == R.id.servererror_btn_reload){
+                l.onReLoadClick(OnLoadActionListener.RELOAD_4_SERVERERROR);
+            }
+
+            else if(id == R.id.netdisable_btn_checknet){
+                l.onCheckNet();
+            }
+
+            else if(id == R.id.netdisable_btn_refresh){
+                l.onReLoadClick(OnLoadActionListener.RELOAD_4_NETDISABLE);
             }
         }
     };
@@ -80,7 +82,7 @@ public class SimpleLoadLayout extends LoadLayout {
     private View createLoadingView(){
         View view = View.inflate(getContext(), R.layout.layout_loading, null);
         ProgressBar mPb = (ProgressBar) view.findViewById(R.id.loading_pb);
-        mPb.setIndeterminateDrawable(new Circle());
+        // mPb.setIndeterminateDrawable(new Circle());
         return view;
     }
 

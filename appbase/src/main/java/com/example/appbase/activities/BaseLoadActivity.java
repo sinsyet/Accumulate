@@ -7,7 +7,8 @@ import android.support.annotation.LayoutRes;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.demo.views.SimpleLoadLayout;
+import com.example.viewlib.layout.SimpleLoadLayout;
+
 
 public class BaseLoadActivity extends BaseActivity implements SimpleLoadLayout.OnLoadActionListener {
 

@@ -7,8 +7,6 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.util.Log;
 
-import com.example.demo.app.App;
-import com.example.demo.utils.AppHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +21,7 @@ public class NetStatus extends BroadcastReceiver {
     private static final String TAG = "NetStatus";
     private static boolean sNetStatus;
     private static NetStatus netStatus;
-
-    static {
-        sNetStatus = AppHelper.isNetActive();
-    }
+    private static Context sContext;
 
     private static List<Callback> sCbs = new ArrayList<>();
 
@@ -35,18 +30,28 @@ public class NetStatus extends BroadcastReceiver {
         void onNetChanged(boolean connect);
     }
 
+    public static void attachContext(Context ctx){
+        if(sContext == null) {
+            sContext = ctx;
+        }
+    }
+
+    public static void destory(){
+        sCbs.clear();
+        unregister();
+    }
+
     public static void registerNoRepeat(){
         if(netStatus!= null) return;
         netStatus = new NetStatus();
-        App.sContext
-                .registerReceiver(
+        sContext.registerReceiver(
                         netStatus,
                         new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
     public static void unregister(){
         if(netStatus == null) return;
-        App.sContext.unregisterReceiver(netStatus);
+        sContext.unregisterReceiver(netStatus);
         netStatus = null;
     }
 
@@ -63,7 +68,7 @@ public class NetStatus extends BroadcastReceiver {
     }
 
     public static boolean isNetActive() {
-        return AppHelper.isNetActive();
+        return AppHelper.isNetActive(sContext);
     }
 
     @Override
@@ -73,7 +78,7 @@ public class NetStatus extends BroadcastReceiver {
             return;
         }
 
-        boolean netConneted = AppHelper.isNetActive();
+        boolean netConneted = AppHelper.isNetActive(sContext);
         if (netConneted == sNetStatus) {
             return;
         }

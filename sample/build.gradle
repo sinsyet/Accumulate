@@ -31,4 +31,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile project(':viewlib')
     compile project(':ndklib')
+    compile project(':apphelper')
+    compile project(path: ':appbase')
 }

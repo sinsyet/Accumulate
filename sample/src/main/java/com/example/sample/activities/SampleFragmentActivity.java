@@ -3,6 +3,8 @@ package com.example.sample.activities;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.example.sample.R;
+
 public class SampleFragmentActivity extends AppCompatActivity {
 
     @Override
