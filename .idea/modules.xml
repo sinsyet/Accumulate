@@ -3,12 +3,19 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Accumulate.iml" filepath="$PROJECT_DIR$/Accumulate.iml" />
+      <module fileurl="file://D:\personal\ygx\Code\Accumulate\Accumulate.iml" filepath="D:\personal\ygx\Code\Accumulate\Accumulate.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://D:\personal\ygx\Code\Accumulate\app\app.iml" filepath="D:\personal\ygx\Code\Accumulate\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/appbase/appbase.iml" filepath="$PROJECT_DIR$/appbase/appbase.iml" />
+      <module fileurl="file://D:\personal\ygx\Code\Accumulate\appbase\appbase.iml" filepath="D:\personal\ygx\Code\Accumulate\appbase\appbase.iml" />
       <module fileurl="file://$PROJECT_DIR$/apphelper/apphelper.iml" filepath="$PROJECT_DIR$/apphelper/apphelper.iml" />
+      <module fileurl="file://D:\personal\ygx\Code\Accumulate\apphelper\apphelper.iml" filepath="D:\personal\ygx\Code\Accumulate\apphelper\apphelper.iml" />
       <module fileurl="file://$PROJECT_DIR$/ndklib/ndklib.iml" filepath="$PROJECT_DIR$/ndklib/ndklib.iml" />
+      <module fileurl="file://D:\personal\ygx\Code\Accumulate\ndklib\ndklib.iml" filepath="D:\personal\ygx\Code\Accumulate\ndklib\ndklib.iml" />
       <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" />
+      <module fileurl="file://D:\personal\ygx\Code\Accumulate\sample\sample.iml" filepath="D:\personal\ygx\Code\Accumulate\sample\sample.iml" />
       <module fileurl="file://$PROJECT_DIR$/viewlib/viewlib.iml" filepath="$PROJECT_DIR$/viewlib/viewlib.iml" />
+      <module fileurl="file://D:\personal\ygx\Code\Accumulate\viewlib\viewlib.iml" filepath="D:\personal\ygx\Code\Accumulate\viewlib\viewlib.iml" />
     </modules>
   </component>
 </project>
