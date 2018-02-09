@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.apphelper.AppHelper;
 import com.example.sample.R;
 
 
@@ -24,8 +25,9 @@ public class SampleAtyHolder extends ViewHoder<Class<? extends Activity>> {
 
     @Override
     protected void onViewCreated(View v) {
-        mTv = (TextView) v.findViewById(R.id.sampleatys_tv);
 
+        mTv = (TextView) v.findViewById(R.id.sampleatys_tv);
+        mTv.setBackgroundColor(AppHelper.randArgb());
     }
 
     @Override

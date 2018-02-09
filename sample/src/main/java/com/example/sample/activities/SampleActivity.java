@@ -24,6 +24,7 @@ public class SampleActivity extends AppCompatActivity implements AdapterView.OnI
 
     {
         mAtys.add(LoadActivity.class);
+        mAtys.add(GraphActivity.class);
     }
 
     @Override
@@ -34,6 +35,7 @@ public class SampleActivity extends AppCompatActivity implements AdapterView.OnI
         mGv = (GridView) findViewById(R.id.sample_gv);
 
         adapter = new SampleAtyAdapter(mAtys);
+        mGv.setNumColumns(3);
         mGv.setAdapter(adapter);
         mGv.setOnItemClickListener(this);
     }
