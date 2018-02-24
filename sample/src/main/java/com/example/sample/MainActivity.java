@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.androidhttpserver.ServerService;
 import com.example.sample.activities.SampleActivity;
 import com.example.sample.activities.SampleFragmentActivity;
 
@@ -17,6 +18,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         findViewById(R.id.main_btn_aty).setOnClickListener(this);
         findViewById(R.id.main_btn_fragment).setOnClickListener(this);
+
+        startService(new Intent(this, ServerService.class));
     }
 
     @Override

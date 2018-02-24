@@ -34,4 +34,5 @@ dependencies {
     compile project(':ndklib')
     compile project(':apphelper')
     compile project(path: ':appbase')
+    implementation project(':AndroidHttpServer')
 }
