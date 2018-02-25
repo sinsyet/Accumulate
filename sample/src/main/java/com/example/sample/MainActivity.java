@@ -6,8 +6,12 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.androidhttpserver.ServerService;
+import com.example.androidhttpserver.WebMappingSet;
+import com.example.androidhttpserver.webinfo.WebMapping;
 import com.example.sample.activities.SampleActivity;
 import com.example.sample.activities.SampleFragmentActivity;
+import com.example.sample.servlets.IndexServlet;
+import com.example.sample.servlets.LoginServlet;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -19,7 +23,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.main_btn_aty).setOnClickListener(this);
         findViewById(R.id.main_btn_fragment).setOnClickListener(this);
 
+        initServlet();
         startService(new Intent(this, ServerService.class));
+    }
+
+    private void initServlet(){
+        WebMappingSet.put(WebMappingSet.INDEX,new WebMapping("/", IndexServlet.class));
+        WebMappingSet.put("/login",new WebMapping("/login", LoginServlet.class));
+
     }
 
     @Override

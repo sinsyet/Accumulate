@@ -9,7 +9,9 @@ import android.util.Log;
 import java.io.IOException;
 
 public class ServerService extends Service {
-    private SimpleServer server;
+    private static final String TAG = "ServerService";
+    private AndroidHttpServer androidHttpServer;
+
     public ServerService() {
     }
 
@@ -23,20 +25,12 @@ public class ServerService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        server = new SimpleServer();
+        androidHttpServer = new AndroidHttpServer(9999, getApplicationContext());
         try {
-
-            // 因为程序模拟的是html放置在asset目录下，
-            // 所以在这里存储一下AssetManager的指针。
-            server.asset_mgr = this.getAssets();
-
-            // 启动web服务
-            server.start();
-
-            Log.i("Httpd", "The server started.");
-        } catch(IOException ioe) {
-            Log.w("Httpd", "The server could not start.");
+            androidHttpServer.start();
+            Log.e(TAG, "onCreate: android http server is running...");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        // XmlResourceParser xml = getResources().getXml(R.xml.servlet);
     }
 }

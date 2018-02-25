@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web_app>
+    <index-page>
+        <welcome-file>index.jsp</welcome-file>
+    </index-page>
+
+    <web-mapping>
+        <url-pattern>/login</url-pattern>
+        <web-class>com.example.day12.servlet.FindAllServlet</web-class>
+    </web-mapping>
+</web_app>

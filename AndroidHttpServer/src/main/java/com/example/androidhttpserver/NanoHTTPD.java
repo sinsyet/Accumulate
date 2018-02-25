@@ -2,6 +2,9 @@ package com.example.androidhttpserver;
 
 import android.util.Log;
 
+import com.example.androidhttpserver.servlet.http.Cookie;
+import com.example.androidhttpserver.servlet.http.HttpStatus;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
@@ -27,7 +30,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -293,7 +295,7 @@ public abstract class NanoHTTPD {
     @Deprecated
     public Response serve(String uri, Method method, Map<String, String> headers, Map<String, String> parms,
                                    Map<String, String> files) {
-        return new Response(Response.Status.NOT_FOUND, MIME_PLAINTEXT, "Not Found");
+        return new Response(HttpStatus.NOT_FOUND, MIME_PLAINTEXT, "Not Found");
     }
 
     /**
@@ -312,7 +314,7 @@ public abstract class NanoHTTPD {
             try {
                 session.parseBody(files);
             } catch (IOException ioe) {
-                return new Response(Response.Status.INTERNAL_ERROR, MIME_PLAINTEXT, "SERVER INTERNAL ERROR: IOException: " + ioe.getMessage());
+                return new Response(HttpStatus.INTERNAL_ERROR, MIME_PLAINTEXT, "SERVER INTERNAL ERROR: IOException: " + ioe.getMessage());
             } catch (ResponseException re) {
                 return new Response(re.getStatus(), MIME_PLAINTEXT, re.getMessage());
             }
@@ -567,7 +569,7 @@ public abstract class NanoHTTPD {
         /**
          * HTTP status code after processing, e.g. "200 OK", HTTP_OK
          */
-        private Status status;
+        private HttpStatus status;
         /**
          * MIME type of content, e.g. "text/html"
          */
@@ -593,13 +595,13 @@ public abstract class NanoHTTPD {
          * Default constructor: response = HTTP_OK, mime = MIME_HTML and your supplied message
          */
         public Response(String msg) {
-            this(Status.OK, MIME_HTML, msg);
+            this(HttpStatus.OK, MIME_HTML, msg);
         }
 
         /**
          * Basic constructor.
          */
-        public Response(Status status, String mimeType, InputStream data) {
+        public Response(HttpStatus status, String mimeType, InputStream data) {
             this.status = status;
             this.mimeType = mimeType;
             this.data = data;
@@ -608,7 +610,7 @@ public abstract class NanoHTTPD {
         /**
          * Convenience method that makes an InputStream out of given text.
          */
-        public Response(Status status, String mimeType, String txt) {
+        public Response(HttpStatus status, String mimeType, String txt) {
             this.status = status;
             this.mimeType = mimeType;
             try {
@@ -733,11 +735,11 @@ public abstract class NanoHTTPD {
             }
         }
 
-        public Status getStatus() {
+        public HttpStatus getStatus() {
             return status;
         }
 
-        public void setStatus(Status status) {
+        public void setStatus(HttpStatus status) {
             this.status = status;
         }
 
@@ -768,10 +770,10 @@ public abstract class NanoHTTPD {
         public void setChunkedTransfer(boolean chunkedTransfer) {
             this.chunkedTransfer = chunkedTransfer;
         }
-
-        /**
+/*
+        *//**
          * Some HTTP response status codes
-         */
+         *//*
         public enum Status {
             OK(200, "OK"), CREATED(201, "Created"), ACCEPTED(202, "Accepted"), NO_CONTENT(204, "No Content"), PARTIAL_CONTENT(206, "Partial Content"), REDIRECT(301,
                 "Moved Permanently"), NOT_MODIFIED(304, "Not Modified"), BAD_REQUEST(400, "Bad Request"), UNAUTHORIZED(401,
@@ -792,24 +794,24 @@ public abstract class NanoHTTPD {
             public String getDescription() {
                 return "" + this.requestStatus + " " + description;
             }
-        }
+        }*/
     }
 
     public static final class ResponseException extends Exception {
 
-        private final Response.Status status;
+        private final HttpStatus status;
 
-        public ResponseException(Response.Status status, String message) {
+        public ResponseException(HttpStatus status, String message) {
             super(message);
             this.status = status;
         }
 
-        public ResponseException(Response.Status status, String message, Exception e) {
+        public ResponseException(HttpStatus status, String message, Exception e) {
             super(message, e);
             this.status = status;
         }
 
-        public Response.Status getStatus() {
+        public HttpStatus getStatus() {
             return status;
         }
     }
@@ -940,7 +942,7 @@ public abstract class NanoHTTPD {
 
                 method = Method.lookup(pre.get("method"));
                 if (method == null) {
-                    throw new ResponseException(Response.Status.BAD_REQUEST, "BAD REQUEST: Syntax error.");
+                    throw new ResponseException(HttpStatus.BAD_REQUEST, "BAD REQUEST: Syntax error.");
                 }
 
                 uri = pre.get("uri");
@@ -950,7 +952,7 @@ public abstract class NanoHTTPD {
                 // Ok, now do the serve()
                 Response r = serve(this);
                 if (r == null) {
-                    throw new ResponseException(Response.Status.INTERNAL_ERROR, "SERVER INTERNAL ERROR: Serve() returned a null response.");
+                    throw new ResponseException(HttpStatus.INTERNAL_ERROR, "SERVER INTERNAL ERROR: Serve() returned a null response.");
                 } else {
                     cookies.unloadQueue(r);
                     r.setRequestMethod(method);
@@ -962,7 +964,7 @@ public abstract class NanoHTTPD {
             } catch (SocketTimeoutException ste) {
             	throw ste;
             } catch (IOException ioe) {
-                Response r = new Response(Response.Status.INTERNAL_ERROR, MIME_PLAINTEXT, "SERVER INTERNAL ERROR: IOException: " + ioe.getMessage());
+                Response r = new Response(HttpStatus.INTERNAL_ERROR, MIME_PLAINTEXT, "SERVER INTERNAL ERROR: IOException: " + ioe.getMessage());
                 r.send(outputStream);
                 safeClose(outputStream);
             } catch (ResponseException re) {
@@ -1026,7 +1028,7 @@ public abstract class NanoHTTPD {
                     if ("multipart/form-data".equalsIgnoreCase(contentType)) {
                         // Handle multipart/form-data
                         if (!st.hasMoreTokens()) {
-                            throw new ResponseException(Response.Status.BAD_REQUEST, "BAD REQUEST: Content type is multipart/form-data but boundary missing. Usage: GET /example/file.html");
+                            throw new ResponseException(HttpStatus.BAD_REQUEST, "BAD REQUEST: Content type is multipart/form-data but boundary missing. Usage: GET /example/file.html");
                         }
 
                         String boundaryStartString = "boundary=";
@@ -1072,13 +1074,13 @@ public abstract class NanoHTTPD {
 
                 StringTokenizer st = new StringTokenizer(inLine);
                 if (!st.hasMoreTokens()) {
-                    throw new ResponseException(Response.Status.BAD_REQUEST, "BAD REQUEST: Syntax error. Usage: GET /example/file.html");
+                    throw new ResponseException(HttpStatus.BAD_REQUEST, "BAD REQUEST: Syntax error. Usage: GET /example/file.html");
                 }
 
                 pre.put("method", st.nextToken());
 
                 if (!st.hasMoreTokens()) {
-                    throw new ResponseException(Response.Status.BAD_REQUEST, "BAD REQUEST: Missing URI. Usage: GET /example/file.html");
+                    throw new ResponseException(HttpStatus.BAD_REQUEST, "BAD REQUEST: Missing URI. Usage: GET /example/file.html");
                 }
 
                 String uri = st.nextToken();
@@ -1108,7 +1110,7 @@ public abstract class NanoHTTPD {
 
                 pre.put("uri", uri);
             } catch (IOException ioe) {
-                throw new ResponseException(Response.Status.INTERNAL_ERROR, "SERVER INTERNAL ERROR: IOException: " + ioe.getMessage(), ioe);
+                throw new ResponseException(HttpStatus.INTERNAL_ERROR, "SERVER INTERNAL ERROR: IOException: " + ioe.getMessage(), ioe);
             }
         }
 
@@ -1123,7 +1125,7 @@ public abstract class NanoHTTPD {
                 String mpline = in.readLine();
                 while (mpline != null) {
                     if (!mpline.contains(boundary)) {
-                        throw new ResponseException(Response.Status.BAD_REQUEST, "BAD REQUEST: Content type is multipart/form-data but next chunk does not start with boundary. Usage: GET /example/file.html");
+                        throw new ResponseException(HttpStatus.BAD_REQUEST, "BAD REQUEST: Content type is multipart/form-data but next chunk does not start with boundary. Usage: GET /example/file.html");
                     }
                     boundarycount++;
                     Map<String, String> item = new HashMap<String, String>();
@@ -1138,7 +1140,7 @@ public abstract class NanoHTTPD {
                     if (mpline != null) {
                         String contentDisposition = item.get("content-disposition");
                         if (contentDisposition == null) {
-                            throw new ResponseException(Response.Status.BAD_REQUEST, "BAD REQUEST: Content type is multipart/form-data but no content-disposition info found. Usage: GET /example/file.html");
+                            throw new ResponseException(HttpStatus.BAD_REQUEST, "BAD REQUEST: Content type is multipart/form-data but no content-disposition info found. Usage: GET /example/file.html");
                         }
                         StringTokenizer st = new StringTokenizer(contentDisposition, "; ");
                         Map<String, String> disposition = new HashMap<String, String>();
@@ -1167,7 +1169,7 @@ public abstract class NanoHTTPD {
                             }
                         } else {
                             if (boundarycount > bpositions.length) {
-                                throw new ResponseException(Response.Status.INTERNAL_ERROR, "Error processing request");
+                                throw new ResponseException(HttpStatus.INTERNAL_ERROR, "Error processing request");
                             }
                             int offset = stripMultipartHeaders(fbuf, bpositions[boundarycount - 2]);
                             String path = saveTmpFile(fbuf, offset, bpositions[boundarycount - 1] - offset - 4);
@@ -1182,7 +1184,7 @@ public abstract class NanoHTTPD {
                     }
                 }
             } catch (IOException ioe) {
-                throw new ResponseException(Response.Status.INTERNAL_ERROR, "SERVER INTERNAL ERROR: IOException: " + ioe.getMessage(), ioe);
+                throw new ResponseException(HttpStatus.INTERNAL_ERROR, "SERVER INTERNAL ERROR: IOException: " + ioe.getMessage(), ioe);
             }
         }
 
@@ -1336,7 +1338,7 @@ public abstract class NanoHTTPD {
         }
     }
 
-    public static class Cookie {
+    /*public static class Cookie {
         private String n, v, e;
 
         public Cookie(String name, String value, String expires) {
@@ -1367,7 +1369,7 @@ public abstract class NanoHTTPD {
             calendar.add(Calendar.DAY_OF_MONTH, days);
             return dateFormat.format(calendar.getTime());
         }
-    }
+    }*/
 
     /**
      * Provides rudimentary support for cookies.
