@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<web-server>
+    <android-servlet>
+        <url>/</url>
+        <servlet-class>com.example.sample.servlets.IndexServlet</servlet-class>
+    </android-servlet>
+
+    <android-servlet>
+        <url>/login</url>
+        <servlet-class>com.example.sample.servlets.LoginServlet</servlet-class>
+    </android-servlet>
+</web-server>

@@ -27,7 +27,9 @@ public class IndexServlet extends AndroidHttpServlet {
             String lasttimeValue = lasttime.getValue();
             try{
                 long l = Long.parseLong(lasttimeValue);
-                if(System.currentTimeMillis() - l > 2 * 1000 * 60){
+                long now = System.currentTimeMillis();
+                Log.e(TAG, "doRequest: "+l+" -- "+now);
+                if((now - l) < 2 * 1000 * 60){
                     // 2分钟;
                     resp.setMimeType("text/html");
                     os.write("already login".getBytes("UTF-8"));

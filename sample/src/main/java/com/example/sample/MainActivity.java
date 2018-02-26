@@ -28,8 +28,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initServlet(){
-        WebMappingSet.put(WebMappingSet.INDEX,new WebMapping("/", IndexServlet.class));
-        WebMappingSet.put("/login",new WebMapping("/login", LoginServlet.class));
+        /*WebMappingSet.put(WebMappingSet.INDEX,new WebMapping("/", IndexServlet.class));
+        WebMappingSet.put("/login",new WebMapping("/login", LoginServlet.class));*/
 
     }
 
