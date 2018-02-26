@@ -108,6 +108,14 @@ public class AndroidHttpServer extends NanoHTTPD{
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException ignored) {
+
+                }
+            }
         }
     }
 
