@@ -42,7 +42,7 @@ public class AndroidHttpServer extends NanoHTTPD{
                           Map<String, String> files) {
 
         WebMapping mapping = WebMappingSet.findMapping(uri);
-        Log.e(TAG, "serve: "+mapping.getServletClass()+" -- "+mapping.getHtmlPath()+" -- "+mapping.getUrl_pattern()+" -- "+uri);
+
         if(!TextUtils.isEmpty(mapping.getHtmlPath())){
             // html
             String htmlPath = mapping.getHtmlPath();
@@ -67,9 +67,20 @@ public class AndroidHttpServer extends NanoHTTPD{
                     response1.addHeader(entry.getKey(),entry.getValue());
                 }
 
+                // 拼装cookies, Set-Cookie: key1=value1;key2=value2;...
                 List<Cookie> cookies = response.getCookies();
-                for (Cookie cookie : cookies) {
-                    response1.addHeader("Set-Cookie",cookie.getName()+"="+cookie.getValue());
+                int size = cookies.size();
+                StringBuilder cookieBuf = new StringBuilder();
+                for (int i = 0; i < size; i++) {
+                    Cookie cookie = cookies.get(i);
+                    cookieBuf.append(cookie.getName()).append("=").append(cookie.getValue());
+                    if(i != size-1){
+                        cookieBuf.append("; ");
+                    }
+                }
+                String cookiesStr = cookieBuf.toString();
+                if(!TextUtils.isEmpty(cookiesStr)){
+                    response1.addHeader("Set-Cookie",cookiesStr);
                 }
                 return response1;
             } catch (Exception e) {
@@ -109,7 +120,26 @@ public class AndroidHttpServer extends NanoHTTPD{
 
         if(headers != null){
             for (Map.Entry<String, String> entry : headers.entrySet()) {
-                request.injectHeader(entry.getKey(),entry.getValue());
+                Log.e(TAG, "createRequest: "+entry.getKey()+" -- "+entry.getValue());
+                // 服务器向浏览器写回的时候是Set-Cookie, 但是浏览器请求的时候携带的是cookie
+                // cookie -- testKey=testValue; lastTime=1519610074200
+                if("cookie".equals(entry.getKey())){
+                    String cookiesStr = entry.getValue();
+                    if(!TextUtils.isEmpty(cookiesStr)){
+                        String[] cookies = cookiesStr.split("; ");
+                        for (String cookie:cookies){
+                            try {
+                                String[] split = cookie.split("=");
+                                request.injectCookie(new Cookie(split[0],split[1]));
+                                Log.e(TAG, "createRequest: "+cookie+" -- "+split[0]+" -- "+split[1]);
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }else {
+                    request.injectHeader(entry.getKey(), entry.getValue());
+                }
             }
         }
 
@@ -121,6 +151,9 @@ public class AndroidHttpServer extends NanoHTTPD{
 
         request.injectReqUri(uri);
         request.injectReqMethod(method.name());
+
+        // 注入cookie
+
 
         return request;
     }

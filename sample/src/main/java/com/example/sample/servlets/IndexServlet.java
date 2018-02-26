@@ -20,6 +20,7 @@ public class IndexServlet extends AndroidHttpServlet {
     public void doRequest(IAndroidServletRequest req, IAndroidServletResponse resp) {
         Log.e(TAG, "doRequest: method: "+req.getMethod());
         Cookie lasttime = req.getCookie("lastTime");
+        Log.e(TAG, "doRequest: cookie: "+((lasttime==null)?"cookie is null":(lasttime.getName()+"="+lasttime.getValue())));
         OutputStream os = resp.getOutputStream();
         resp.setStatus(HttpStatus.OK);
         if(lasttime != null) {
@@ -29,12 +30,12 @@ public class IndexServlet extends AndroidHttpServlet {
                 if(System.currentTimeMillis() - l > 2 * 1000 * 60){
                     // 2分钟;
                     resp.setMimeType("text/html");
-                    os.write("已登录".getBytes("UTF-8"));
+                    os.write("already login".getBytes("UTF-8"));
                     os.flush();
                 }else{
                     // 2分钟;
                     resp.setMimeType("text/html");
-                    os.write("会话超时, 请重新登录".getBytes("UTF-8"));
+                    os.write("session timeout".getBytes("UTF-8"));
                     os.flush();
                 }
             }catch (Exception e){

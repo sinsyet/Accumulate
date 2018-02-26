@@ -32,7 +32,7 @@ public class LoginServlet extends AndroidHttpServlet {
         resp.setStatus(HttpStatus.OK);
         Cookie lastTime = new Cookie("lastTime", System.currentTimeMillis() + "");
         resp.addCookie(lastTime);
-
+        resp.addCookie(new Cookie("testKey","testValue"));
         try {
             jsonObject.put("status",200);
             jsonObject.put("msg","login success");

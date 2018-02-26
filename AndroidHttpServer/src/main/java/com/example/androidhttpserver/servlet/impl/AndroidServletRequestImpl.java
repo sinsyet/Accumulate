@@ -32,6 +32,10 @@ public class AndroidServletRequestImpl implements IAndroidServletRequest {
         mHeaders.put(name, value);
     }
 
+    public void injectCookie(Cookie cookie){
+        mCookies.put(cookie.getName(),cookie);
+    }
+
     public void injectInputStream(InputStream is){
         this.mRequestInputStream = is;
     }
