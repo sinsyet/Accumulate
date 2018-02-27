@@ -591,6 +591,7 @@ public abstract class NanoHTTPD {
          */
         private boolean chunkedTransfer;
 
+        private List<String> cookieValues = new ArrayList<>();
         /**
          * Default constructor: response = HTTP_OK, mime = MIME_HTML and your supplied message
          */
@@ -627,6 +628,13 @@ public abstract class NanoHTTPD {
             header.put(name, value);
         }
 
+        public void addCookie(Cookie... cookies){
+            int length = cookies.length;
+            for (int i = 0; i < length; i++) {
+                cookieValues.add(cookies[i].toCookieString());
+            }
+        }
+
         /**
          * Sends given response to the socket.
          */
@@ -642,27 +650,26 @@ public abstract class NanoHTTPD {
                 }
                 PrintWriter pw = new PrintWriter(outputStream);
                 pw.print("HTTP/1.1 " + status.getDescription() + " \r\n");
-                Log.e("Response", "send: "+"http: "+"HTTP/1.1 " + status.getDescription() + " \r\n");
                 if (mime != null) {
                     pw.print("Content-Type: " + mime + "\r\n");
-                    Log.e("Response", "send: mimeType: "+mimeType);
                 }
 
                 if (header == null || header.get("Date") == null) {
                     pw.print("Date: " + gmtFrmt.format(new Date()) + "\r\n");
-                    Log.e("Response", "send: Date: "+"Date: " + gmtFrmt.format(new Date()) + "\r\n");
                 }
 
                 if (header != null) {
                     for (String key : header.keySet()) {
                         String value = header.get(key);
                         pw.print(key + ": " + value + "\r\n");
-                        Log.e("Response", "send: header: "+key + ": " + value + "\r\n");
                     }
                 }
 
+                for (String cookieStr:cookieValues){
+                    pw.print("Set-Cookie" + ": " + cookieStr + "\r\n");
+                }
+
                 pw.print("Connection: keep-alive\r\n");
-                Log.e("Response", "send: "+"Connection: keep-alive\r\n");
 
                 if (requestMethod != Method.HEAD && chunkedTransfer) {
                     sendAsChunked(outputStream, pw);

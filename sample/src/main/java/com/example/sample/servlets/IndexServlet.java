@@ -1,6 +1,5 @@
 package com.example.sample.servlets;
 
-import android.content.res.AssetManager;
 import android.util.Log;
 
 import com.example.androidhttpserver.servlet.base.IAndroidServletRequest;
@@ -31,12 +30,12 @@ public class IndexServlet extends AndroidHttpServlet {
                 Log.e(TAG, "doRequest: "+l+" -- "+now);
                 if((now - l) < 2 * 1000 * 60){
                     // 2分钟;
-                    resp.setMimeType("text/html");
+                    resp.setContentType("text/html");
                     os.write("already login".getBytes("UTF-8"));
                     os.flush();
                 }else{
                     // 2分钟;
-                    resp.setMimeType("text/html");
+                    resp.setContentType("text/html");
                     os.write("session timeout".getBytes("UTF-8"));
                     os.flush();
                 }
@@ -44,7 +43,7 @@ public class IndexServlet extends AndroidHttpServlet {
                 e.printStackTrace();
             }
         }else{
-            resp.setMimeType("text/html");
+            resp.setContentType("text/html");
             InputStream is = null;
             try {
                 is = getAssetManager().open("html/index.html");

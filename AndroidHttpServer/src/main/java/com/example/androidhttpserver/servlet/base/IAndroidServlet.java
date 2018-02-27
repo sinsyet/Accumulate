@@ -12,5 +12,4 @@ public interface IAndroidServlet {
 
     void doRequest(IAndroidServletRequest req,IAndroidServletResponse resp);
 
-
 }

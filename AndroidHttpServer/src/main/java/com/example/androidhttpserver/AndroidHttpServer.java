@@ -3,8 +3,8 @@ package com.example.androidhttpserver;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Xml;
 
 import com.example.androidhttpserver.servlet.base.IAndroidServletRequest;
@@ -15,7 +15,6 @@ import com.example.androidhttpserver.servlet.impl.AndroidServletResponseImpl;
 import com.example.androidhttpserver.webinfo.WebMapping;
 
 import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,22 +65,18 @@ public class AndroidHttpServer extends NanoHTTPD{
                             case "url":
                                 if(mapping != null) {
                                     String url_pattern = xmlPullParser.nextText();
-                                    Log.e(TAG, "loadWebSet: url_pattern: "+url_pattern);
                                     mapping.setUrl_pattern(url_pattern);
                                 }
                                 break;
                             case "html-file":
                                 if(mapping != null) {
                                     String html_file = xmlPullParser.nextText();
-                                    Log.e(TAG, "loadWebSet: html_file: "+html_file);
                                     mapping.setHtmlPath(html_file);
-
                                 }
                                 break;
                             case "servlet-class":
                                 if(mapping != null) {
                                     String servletName = xmlPullParser.nextText();
-                                    Log.e(TAG, "loadWebSet: servletName: "+servletName);
                                     mapping.loadServletClazz(servletName);
                                 }
                                 break;
@@ -92,7 +87,7 @@ public class AndroidHttpServer extends NanoHTTPD{
                         if("android-servlet".equals(endName)){
                             if(mapping == null){
                                 throw new IllegalStateException(
-                                        "find end 'android-servlet' tag withour start tag");
+                                        "find end 'android-servlet' tag without start tag");
                             }else{
                                 if(mapping.isValid())
                                     WebMappingSet.put(mapping.getUrl_pattern(),mapping);
@@ -145,40 +140,49 @@ public class AndroidHttpServer extends NanoHTTPD{
                 // ------ cookie;
                 //
 
-                AndroidHttpServlet androidHttpServlet = servletClass.newInstance();
-                androidHttpServlet.injectContext(ctx);
+                AndroidHttpServlet androidHttpServlet  = createServlet(servletClass);
+
                 IAndroidServletRequest request = createRequest(uri, method, headers, parms, files);
+
                 AndroidServletResponseImpl response = new AndroidServletResponseImpl();
+
                 androidHttpServlet.doRequest(request,response);
 
-                Response response1 = new Response(response.getStatus(), response.getMimeType(), response.toResponseString());
-                Map<String, String> respHeader = response.getHeaders();
-                for (Map.Entry<String, String> entry : respHeader.entrySet()) {
-                    response1.addHeader(entry.getKey(),entry.getValue());
-                }
-
-                // 拼装cookies, Set-Cookie: key1=value1;key2=value2;...
-                List<Cookie> cookies = response.getCookies();
-                int size = cookies.size();
-                StringBuilder cookieBuf = new StringBuilder();
-                for (int i = 0; i < size; i++) {
-                    Cookie cookie = cookies.get(i);
-                    cookieBuf.append(cookie.getName()).append("=").append(cookie.getValue());
-                    if(i != size-1){
-                        cookieBuf.append("; ");
-                    }
-                }
-                String cookiesStr = cookieBuf.toString();
-                if(!TextUtils.isEmpty(cookiesStr)){
-                    response1.addHeader("Set-Cookie",cookiesStr);
-                }
-                return response1;
+                return createResponseByAndroidServletResp(response);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         return super.serve(uri, method, headers, parms, files);
+    }
+
+    @NonNull
+    private Response createResponseByAndroidServletResp(AndroidServletResponseImpl response) {
+
+        // 传入参数;
+        // 请求状态:
+        // content type
+        // 文本
+        Response response1 = new Response(response.getStatus(), response.getContentType(), response.toResponseString());
+
+        // 反馈的头信息
+        Map<String, String> respHeader = response.getHeaders();
+        for (Map.Entry<String, String> entry : respHeader.entrySet()) {
+            response1.addHeader(entry.getKey(),entry.getValue());
+        }
+
+        List<Cookie> cookies = response.getCookies();
+        response1.addCookie(cookies.toArray(new Cookie[0]));
+        return response1;
+    }
+
+    private AndroidHttpServlet createServlet(Class<? extends AndroidHttpServlet> servletClass)
+            throws IllegalAccessException,
+            InstantiationException {
+        AndroidHttpServlet androidHttpServlet = servletClass.newInstance();
+        androidHttpServlet.injectContext(ctx);
+        return androidHttpServlet;
     }
 
     private Response handleAsHtml(String htmlPath){
@@ -210,7 +214,7 @@ public class AndroidHttpServer extends NanoHTTPD{
 
         if(headers != null){
             for (Map.Entry<String, String> entry : headers.entrySet()) {
-                Log.e(TAG, "createRequest: "+entry.getKey()+" -- "+entry.getValue());
+
                 // 服务器向浏览器写回的时候是Set-Cookie, 但是浏览器请求的时候携带的是cookie
                 // cookie -- testKey=testValue; lastTime=1519610074200
                 if("cookie".equals(entry.getKey())){
@@ -221,7 +225,6 @@ public class AndroidHttpServer extends NanoHTTPD{
                             try {
                                 String[] split = cookie.split("=");
                                 request.injectCookie(new Cookie(split[0],split[1]));
-                                Log.e(TAG, "createRequest: "+cookie+" -- "+split[0]+" -- "+split[1]);
                             }catch (Exception e){
                                 e.printStackTrace();
                             }

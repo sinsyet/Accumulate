@@ -12,9 +12,9 @@ public interface IAndroidServletResponse {
 
     /**
      * 文本信息; content Type: text/html;charset=utf-8  , 有点类似
-     * @param mimeType
+     * @param contentType
      */
-    void setMimeType(String mimeType);
+    void setContentType(String contentType);
 
     /**
      * cookie其实是key为Set-Cookie: cookieKey=cookieValue 的head信息;

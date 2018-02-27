@@ -26,13 +26,18 @@ public class LoginServlet extends AndroidHttpServlet {
             Log.e(TAG, "doRequest: key: "+entry.getKey()+" -- value: "+entry.getValue());
         }
 
-        resp.setMimeType("text/json");
+        resp.setContentType("text/json");
         OutputStream os = resp.getOutputStream();
         JSONObject jsonObject = new JSONObject();
         resp.setStatus(HttpStatus.OK);
         Cookie lastTime = new Cookie("lastTime", System.currentTimeMillis() + "");
         resp.addCookie(lastTime);
-        resp.addCookie(new Cookie("testKey","testValue"));
+        Cookie cookie = new Cookie("testKey", "testValue");
+        Cookie cookie2 = new Cookie("testKey2", "testValue2");
+        cookie.setPath("/Path1");
+        cookie2.setPath("/Path2");
+        resp.addCookie(cookie);
+        resp.addCookie(cookie2);
         try {
             jsonObject.put("status",200);
             jsonObject.put("msg","login success");

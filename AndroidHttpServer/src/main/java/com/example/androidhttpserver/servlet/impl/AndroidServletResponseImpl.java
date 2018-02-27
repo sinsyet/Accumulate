@@ -28,7 +28,7 @@ public class AndroidServletResponseImpl implements IAndroidServletResponse {
     /**
      * MIME type of content, e.g. "text/html"
      */
-    private String mimeType;
+    private String contentType;
     /**
      * Data of the response, may be null.
      */
@@ -52,8 +52,8 @@ public class AndroidServletResponseImpl implements IAndroidServletResponse {
     }
 
     @Override
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     @Override
@@ -79,8 +79,8 @@ public class AndroidServletResponseImpl implements IAndroidServletResponse {
         return status;
     }
 
-    public String getMimeType(){
-        return mimeType;
+    public String getContentType(){
+        return contentType;
     }
 
     public List<Cookie> getCookies(){
