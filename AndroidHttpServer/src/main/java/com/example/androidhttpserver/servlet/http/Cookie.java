@@ -32,7 +32,7 @@ import java.util.TimeZone;
  * 将cookie的expire置为过期时间即可删除;
  * 例如: test1=testV1;
  * test1=-delete-; expire=过期的时间;
- * 
+ *
  * @author YGX
  */
 public class Cookie {
