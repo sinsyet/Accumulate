@@ -26,6 +26,13 @@ import java.util.TimeZone;
  *
  *  pw.print("Set-Cookie" + ": " + cookieStr + "\r\n");
  *
+ * ----------------------------------------------------------------------------------------------
+ *
+ * 如何删除浏览器端的cookie;
+ * 将cookie的expire置为过期时间即可删除;
+ * 例如: test1=testV1;
+ * test1=-delete-; expire=过期的时间;
+ * 
  * @author YGX
  */
 public class Cookie {
@@ -34,7 +41,7 @@ public class Cookie {
     private String name;
     // value
     private String value;
-    // 有效期
+    // 有效期; 不设置则当浏览器关闭时清除cookie
     private String expire;
     // 请求路径
     private String path;
@@ -45,17 +52,16 @@ public class Cookie {
     public Cookie(String name, String value, String expires) {
         this.name = name;
         this.value = value;
-        expire = expires;
+        this.expire = expires;
     }
 
     public Cookie(String name, String value, long secondExpire){
         this.name = name;
         this.value = value;
-        expire = getExpireString(System.currentTimeMillis()+secondExpire * 1000);
+        this.expire = getExpireString(System.currentTimeMillis() + secondExpire * 1000);
     }
 
     public Cookie(String name, String value) {
-        // this(name, value, 30);
         this.name = name;
         this.value = value;
     }
