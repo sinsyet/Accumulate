@@ -12,41 +12,41 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
 public class LoginServlet extends AndroidHttpServlet {
     private static final String TAG = "LoginServlet";
+    private static final String USN = "admin";
+    private static final String PSW = "pass";
+    private static final String LOGIN_FAIL = "html/login_fail.html";
+    private static final String LOGIN_SUCCESS = "html/frameset/main.html";
     @Override
     public void doRequest(IAndroidServletRequest req, IAndroidServletResponse resp) {
-        Map<String, String> paramters = req.getParamterMap();
+        String usn = req.getParamter("usn");
+        String psw = req.getParamter("psw");
 
-        Log.e(TAG, "doRequest: "+req.getMethod());
-        for (Map.Entry<String, String> entry : paramters.entrySet()) {
-            Log.e(TAG, "doRequest: key: "+entry.getKey()+" -- value: "+entry.getValue());
-        }
-
-        resp.setContentType("text/json");
-        OutputStream os = resp.getOutputStream();
-        JSONObject jsonObject = new JSONObject();
         resp.setStatus(HttpStatus.OK);
-        Cookie lastTime = new Cookie("lastTime", System.currentTimeMillis() + "");
-        resp.addCookie(lastTime);
-        Cookie cookie = new Cookie("testKey", "testValue");
-        Cookie cookie2 = new Cookie("testKey2", "testValue2");
-        cookie.setPath("/Path1");
-        cookie2.setPath("/Path2");
-        resp.addCookie(cookie);
-        resp.addCookie(cookie2);
-        try {
-            jsonObject.put("status",200);
-            jsonObject.put("msg","login success");
-        } catch (JSONException ignored) {
+        resp.setContentType("text/html");
+        if(USN.equals(usn) && PSW.equals(psw))
+        {
+            write(LOGIN_SUCCESS,resp.getOutputStream());
+        }else
+            write(LOGIN_FAIL,resp.getOutputStream());
 
-        }
+    }
+
+    private void write(String filePath,OutputStream os){
         try {
-            os.write(jsonObject.toString().getBytes("UTF-8"));
-            os.flush();
+            InputStream is = getAssetManager().open(filePath);
+            byte[] buf = new byte[1024];
+            int len = 0;
+            while ((len = is.read(buf))!= - 1){
+                os.write(buf,0,len);
+                os.flush();
+            }
+            is.close();
         } catch (IOException e) {
 
         }

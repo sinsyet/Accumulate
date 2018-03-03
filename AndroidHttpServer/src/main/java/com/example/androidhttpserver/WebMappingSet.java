@@ -18,7 +18,10 @@ public class WebMappingSet {
     }*/
 
     public static WebMapping findMapping(String url_pattern){
-        if(!sSets.containsKey(url_pattern)) return sSets.get(_404);
+        /*if(!sSets.containsKey(url_pattern)) {
+            Log.e(TAG, "findMapping: "+url_pattern + "not found");
+            return sSets.get(_404);
+        };*/
 
         return sSets.get(url_pattern);
     }

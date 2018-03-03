@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Xml;
 
 import com.example.androidhttpserver.servlet.base.IAndroidServletRequest;
@@ -127,7 +128,9 @@ public class AndroidHttpServer extends NanoHTTPD{
                           Map<String, String> files) {
 
         WebMapping mapping = WebMappingSet.findMapping(uri);
-
+        if(mapping == null){
+            return handleAsExtraRes(uri);
+        }
         if(!TextUtils.isEmpty(mapping.getHtmlPath())){
             // html
             String htmlPath = mapping.getHtmlPath();
@@ -155,6 +158,28 @@ public class AndroidHttpServer extends NanoHTTPD{
         }
 
         return super.serve(uri, method, headers, parms, files);
+    }
+
+    private Response handleAsExtraRes(String uri) {
+        try {
+            Log.e(TAG, "handleAsExtraRes: "+uri);
+            if(uri.startsWith("/"))
+                uri = uri.substring(1);
+            InputStream in = assetManager.open(uri, AssetManager.ACCESS_BUFFER);
+
+            byte[] buffer = new byte[1024 * 1024];
+
+            int temp = 0;
+            int len = 0;
+            while((temp=in.read())!=-1){
+                buffer[len]=(byte)temp;
+                len++;
+            }
+            in.close();
+            return new NanoHTTPD.Response(new String(buffer,0,len));
+        } catch (IOException ignored) {
+        }
+        return handleAsHtml(WebMappingSet.findMapping(WebMappingSet._404).getHtmlPath());
     }
 
     @NonNull
