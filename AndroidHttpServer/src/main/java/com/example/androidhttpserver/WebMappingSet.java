@@ -1,8 +1,6 @@
 package com.example.androidhttpserver;
 
 
-import android.util.Log;
-
 import com.example.androidhttpserver.webinfo.WebMapping;
 
 import java.util.HashMap;
@@ -11,18 +9,14 @@ import java.util.Map;
 public class WebMappingSet {
     private static final String TAG = "WebMappingSet";
     private static Map<String,WebMapping> sSets = new HashMap<>();
-    public static final String _404 = "/404";
-    public static final String INDEX = "/";
-   /* static {
-        sSets.put("404",new WebMapping("/404","html/base/404.html"));
-    }*/
+    static final String _404 = "/404";
+    private static final String INDEX = "/";
+
+    private static Map<Class<? extends AndroidHttpServlet>,AndroidHttpServlet>
+        servletMap = new HashMap<>();
+
 
     public static WebMapping findMapping(String url_pattern){
-        /*if(!sSets.containsKey(url_pattern)) {
-            Log.e(TAG, "findMapping: "+url_pattern + "not found");
-            return sSets.get(_404);
-        };*/
-
         return sSets.get(url_pattern);
     }
 
@@ -30,10 +24,7 @@ public class WebMappingSet {
         sSets.put(key, mapping);
     }
 
-    public static void printf() {
-        for (Map.Entry<String, WebMapping> entry : sSets.entrySet()) {
-            WebMapping value = entry.getValue();
-            Log.e(TAG, "printf: "+value.toString());
-        }
+    public static AndroidHttpServlet getServlet(Class<? extends AndroidHttpServlet> clazz){
+        return servletMap.get(clazz);
     }
 }

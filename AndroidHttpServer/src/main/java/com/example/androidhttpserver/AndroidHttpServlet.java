@@ -1,4 +1,4 @@
-package com.example.androidhttpserver.servlet.impl;
+package com.example.androidhttpserver;
 
 
 import android.content.Context;
@@ -11,7 +11,7 @@ public abstract class AndroidHttpServlet implements IAndroidServlet{
     private Context ctx;
     private AssetManager assetManager;
 
-    public void injectContext(Context ctx){
+    void injectContext(Context ctx){
         this.ctx = ctx;
         assetManager = ctx.getAssets();
     }
@@ -19,6 +19,16 @@ public abstract class AndroidHttpServlet implements IAndroidServlet{
     @Override
     public Context getContext() {
         return ctx;
+    }
+
+    @Override
+    public void init() {
+
+    }
+
+    @Override
+    public void destory() {
+
     }
 
     protected AssetManager getAssetManager(){

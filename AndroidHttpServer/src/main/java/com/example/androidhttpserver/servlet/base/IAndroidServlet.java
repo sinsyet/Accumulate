@@ -10,6 +10,9 @@ public interface IAndroidServlet {
      */
     Context getContext();
 
+    void init();
+
     void doRequest(IAndroidServletRequest req,IAndroidServletResponse resp);
 
+    void destory();
 }

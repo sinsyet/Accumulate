@@ -10,13 +10,13 @@ import android.util.Xml;
 
 import com.example.androidhttpserver.servlet.base.IAndroidServletRequest;
 import com.example.androidhttpserver.servlet.http.Cookie;
-import com.example.androidhttpserver.servlet.impl.AndroidHttpServlet;
 import com.example.androidhttpserver.servlet.impl.AndroidServletRequestImpl;
 import com.example.androidhttpserver.servlet.impl.AndroidServletResponseImpl;
 import com.example.androidhttpserver.webinfo.WebMapping;
 
 import org.xmlpull.v1.XmlPullParser;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -143,7 +143,12 @@ public class AndroidHttpServer extends NanoHTTPD{
                 // ------ cookie;
                 //
 
-                AndroidHttpServlet androidHttpServlet  = createServlet(servletClass);
+
+
+                AndroidHttpServlet androidHttpServlet  = WebMappingSet.getServlet(servletClass);
+                if(androidHttpServlet == null) {
+                    androidHttpServlet = createServlet(servletClass);
+                }
 
                 IAndroidServletRequest request = createRequest(uri, method, headers, parms, files);
 
@@ -215,16 +220,16 @@ public class AndroidHttpServer extends NanoHTTPD{
 
             InputStream in = assetManager.open(htmlPath, AssetManager.ACCESS_BUFFER);
 
-            byte[] buffer = new byte[1024 * 1024];
+            byte[] buffer = new byte[1024];
 
-            int temp = 0;
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
             int len = 0;
-            while((temp=in.read())!=-1){
-                buffer[len]=(byte)temp;
-                len++;
+            while ((len = in.read(buffer))!=-1){
+                baos.write(buffer,0,len);
+                baos.flush();
             }
             in.close();
-            return new NanoHTTPD.Response(new String(buffer,0,len));
+            return new NanoHTTPD.Response(baos.toString());
         } catch (IOException ignored) {
         }
         return handleAsHtml(WebMappingSet.findMapping(WebMappingSet._404).getHtmlPath());

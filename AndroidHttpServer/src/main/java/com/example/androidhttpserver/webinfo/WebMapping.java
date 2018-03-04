@@ -4,7 +4,7 @@ package com.example.androidhttpserver.webinfo;
 import android.text.TextUtils;
 
 import com.example.androidhttpserver.servlet.exception.NoServletException;
-import com.example.androidhttpserver.servlet.impl.AndroidHttpServlet;
+import com.example.androidhttpserver.AndroidHttpServlet;
 
 public class WebMapping {
 
