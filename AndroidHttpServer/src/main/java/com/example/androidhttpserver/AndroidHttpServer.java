@@ -223,7 +223,7 @@ public class AndroidHttpServer extends NanoHTTPD{
             byte[] buffer = new byte[1024];
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            int len = 0;
+            int len;
             while ((len = in.read(buffer))!=-1){
                 baos.write(buffer,0,len);
                 baos.flush();
