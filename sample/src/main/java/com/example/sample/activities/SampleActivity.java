@@ -25,6 +25,7 @@ public class SampleActivity extends AppCompatActivity implements AdapterView.OnI
     {
         mAtys.add(LoadActivity.class);
         mAtys.add(GraphActivity.class);
+        mAtys.add(WebViewActivity.class);
     }
 
     @Override
