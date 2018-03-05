@@ -1,5 +1,6 @@
 package com.example.androidhttpserver.servlet.impl;
 
+import com.example.androidhttpserver.servlet.IRequestDispatcher;
 import com.example.androidhttpserver.servlet.base.IAndroidServletRequest;
 import com.example.androidhttpserver.servlet.http.Cookie;
 
@@ -19,31 +20,35 @@ public class AndroidServletRequestImpl implements IAndroidServletRequest {
 
     private Map<String,Cookie> mCookies = new HashMap<>();
     private String mReqUri;
+    private AndroidHttpServer server;
 
-    public void injectReqMethod(String method){
+    void injectReqMethod(String method){
         this.mRequestMethod = method;
     }
 
-    public void injectParamter(String key,String value){
+    void injectParamter(String key,String value){
         mParamters.put(key, value);
     }
 
-    public void injectHeader(String name,String value){
+    void injectHeader(String name,String value){
         mHeaders.put(name, value);
     }
 
-    public void injectCookie(Cookie cookie){
+    void injectCookie(Cookie cookie){
         mCookies.put(cookie.getName(),cookie);
     }
 
-    public void injectInputStream(InputStream is){
+    void injectInputStream(InputStream is){
         this.mRequestInputStream = is;
     }
 
-    public void injectReqUri(String uri){
+    void injectReqUri(String uri){
         this.mReqUri = uri;
     }
 
+    void injectServer(AndroidHttpServer server){
+        this.server = server;
+    }
     @Override
     public String getParamter(String name) {
         return mParamters.get(name);
@@ -87,5 +92,12 @@ public class AndroidServletRequestImpl implements IAndroidServletRequest {
     @Override
     public Cookie getCookie(String key) {
         return mCookies.get(key);
+    }
+
+    @Override
+    public IRequestDispatcher getRequestDispatcher(String targetUrl) {
+        AndroidRequestDispatcherImpl dispatcher = new AndroidRequestDispatcherImpl(targetUrl);
+        dispatcher.injectServer(server);
+        return dispatcher;
     }
 }

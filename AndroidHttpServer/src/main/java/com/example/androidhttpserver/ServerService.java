@@ -2,9 +2,10 @@ package com.example.androidhttpserver;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.res.XmlResourceParser;
 import android.os.IBinder;
 import android.util.Log;
+
+import com.example.androidhttpserver.servlet.impl.AndroidHttpServer;
 
 import java.io.IOException;
 

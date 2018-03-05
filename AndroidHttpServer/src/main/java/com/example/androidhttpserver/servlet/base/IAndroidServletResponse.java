@@ -31,4 +31,5 @@ public interface IAndroidServletResponse {
 
     OutputStream getOutputStream();
 
+    void sendRedirect(String path);
 }

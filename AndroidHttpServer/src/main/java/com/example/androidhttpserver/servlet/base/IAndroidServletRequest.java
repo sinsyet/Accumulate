@@ -1,6 +1,7 @@
 package com.example.androidhttpserver.servlet.base;
 
 
+import com.example.androidhttpserver.servlet.IRequestDispatcher;
 import com.example.androidhttpserver.servlet.http.Cookie;
 
 import java.io.InputStream;
@@ -60,4 +61,6 @@ public interface IAndroidServletRequest {
     String getReqUri();
 
     Cookie getCookie(String key);
+
+    IRequestDispatcher getRequestDispatcher(String targetUrl);
 }

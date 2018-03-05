@@ -9,4 +9,24 @@
         <url>/login</url>
         <servlet-class>com.example.sample.servlets.LoginServlet</servlet-class>
     </android-servlet>
+
+    <android-servlet>
+        <url>/include</url>
+        <servlet-class>com.example.sample.servlets.IncludeServlet</servlet-class>
+    </android-servlet>
+
+    <android-servlet>
+        <url>/forward</url>
+        <servlet-class>com.example.sample.servlets.ForwardServlet</servlet-class>
+    </android-servlet>
+
+    <android-servlet>
+        <url>/redirect</url>
+        <servlet-class>com.example.sample.servlets.RedirectServlet</servlet-class>
+    </android-servlet>
+
+    <android-servlet>
+        <url>/main</url>
+        <servlet-class>com.example.sample.servlets.MainServlet</servlet-class>
+    </android-servlet>
 </web-server>

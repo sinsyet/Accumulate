@@ -1,5 +1,8 @@
 package com.example.androidhttpserver.servlet.impl;
 
+import android.text.TextUtils;
+import android.util.Log;
+
 import com.example.androidhttpserver.NanoHTTPD;
 import com.example.androidhttpserver.servlet.base.IAndroidServletResponse;
 import com.example.androidhttpserver.servlet.http.Cookie;
@@ -15,6 +18,7 @@ import java.util.Map;
 
 
 public class AndroidServletResponseImpl implements IAndroidServletResponse {
+    private static final String TAG = "AndroidServletResponseI";
     private List<Cookie> mCookies = new ArrayList<>();
 
     private Map<String,String> mHeaders = new HashMap<>();
@@ -46,6 +50,8 @@ public class AndroidServletResponseImpl implements IAndroidServletResponse {
      */
     private boolean chunkedTransfer;
 
+    private String host = "";
+
     @Override
     public void setStatus(HttpStatus status) {
         this.status = status;
@@ -71,6 +77,37 @@ public class AndroidServletResponseImpl implements IAndroidServletResponse {
         return mBaos;
     }
 
+    @Override
+    public void sendRedirect(String path) {
+        if(TextUtils.isEmpty(path)) return;
+
+        if(path.startsWith("./")) {
+            String value = "http://" + host + path.substring(1);
+            Log.e(TAG, "sendRedirect: ");
+            mHeaders.put("Location", value);
+            return;
+        }
+
+
+        if(path.length() >= 8){
+            String schema = path.substring(0, 8);
+            if(schema.toLowerCase().startsWith("https://")){
+                mHeaders.put("Location",path);
+                return;
+            }
+        }
+
+        if(path.length() >= 7){
+            String schema = path.substring(0, 7);
+            if(schema.toLowerCase().startsWith("http://")){
+                mHeaders.put("Location",path);
+                return;
+            }
+        }
+
+        mHeaders.put("Location","http://"+path);
+    }
+
     public String toResponseString(){
         return mBaos.toString();
     }
@@ -89,5 +126,13 @@ public class AndroidServletResponseImpl implements IAndroidServletResponse {
 
     public Map<String,String> getHeaders(){
         return mHeaders;
+    }
+
+    void setHost(String host){
+        this.host = host;
+    }
+
+    void clearOutputStream(){
+        mBaos.reset();
     }
 }

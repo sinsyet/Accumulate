@@ -1,4 +1,4 @@
-package com.example.androidhttpserver;
+package com.example.androidhttpserver.servlet.impl;
 
 
 import android.content.Context;
@@ -8,10 +8,12 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Xml;
 
+import com.example.androidhttpserver.NanoHTTPD;
+import com.example.androidhttpserver.WebMappingSet;
 import com.example.androidhttpserver.servlet.base.IAndroidServletRequest;
+import com.example.androidhttpserver.servlet.base.IAndroidServletResponse;
 import com.example.androidhttpserver.servlet.http.Cookie;
-import com.example.androidhttpserver.servlet.impl.AndroidServletRequestImpl;
-import com.example.androidhttpserver.servlet.impl.AndroidServletResponseImpl;
+import com.example.androidhttpserver.servlet.http.HttpStatus;
 import com.example.androidhttpserver.webinfo.WebMapping;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -19,10 +21,11 @@ import org.xmlpull.v1.XmlPullParser;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
-public class AndroidHttpServer extends NanoHTTPD{
+public class AndroidHttpServer extends NanoHTTPD {
     private static final String TAG = "AndroidHttpServer";
 
     private Context ctx;
@@ -153,7 +156,9 @@ public class AndroidHttpServer extends NanoHTTPD{
                 IAndroidServletRequest request = createRequest(uri, method, headers, parms, files);
 
                 AndroidServletResponseImpl response = new AndroidServletResponseImpl();
-
+                response.setContentType("text/html");
+                response.setStatus(HttpStatus.OK);
+                response.setHost(headers.get("host"));
                 androidHttpServlet.doRequest(request,response);
 
                 return createResponseByAndroidServletResp(response);
@@ -167,7 +172,6 @@ public class AndroidHttpServer extends NanoHTTPD{
 
     private Response handleAsExtraRes(String uri) {
         try {
-            Log.e(TAG, "handleAsExtraRes: "+uri);
             if(uri.startsWith("/"))
                 uri = uri.substring(1);
             InputStream in = assetManager.open(uri, AssetManager.ACCESS_BUFFER);
@@ -240,6 +244,9 @@ public class AndroidHttpServer extends NanoHTTPD{
                                                  Map<String, String> headers,
                                                  Map<String, String> parms,
                                                  Map<String, String> files){
+
+        Log.e(TAG, "createRequest: "+uri);
+
         AndroidServletRequestImpl request = new AndroidServletRequestImpl();
 
         if(headers != null){
@@ -276,8 +283,85 @@ public class AndroidHttpServer extends NanoHTTPD{
         request.injectReqMethod(method.name());
 
         // 注入cookie
-
-
+        request.injectServer(this);
         return request;
+    }
+
+    void onDispatch(String url, IAndroidServletRequest req, IAndroidServletResponse resp){
+
+        if(TextUtils.isEmpty(url)){
+            handleAsExtraRes(WebMappingSet._404,resp.getOutputStream());
+            return;
+        }
+
+        if (url.startsWith("./")) {
+            url = url.substring(1);
+        }
+        WebMapping mapping = WebMappingSet.findMapping(url);
+        if(mapping == null){
+            handleAsExtraRes(url,resp.getOutputStream());
+            return;
+        }
+
+        if(!TextUtils.isEmpty(mapping.getHtmlPath())){
+            // html
+            String htmlPath = mapping.getHtmlPath();
+            write2OutputStream(htmlPath,resp.getOutputStream());
+        }else{
+            // servlet
+            Class<? extends AndroidHttpServlet> servletClass = mapping.getServletClass();
+            try {
+                //
+                // ------ cookie;
+                //
+                AndroidHttpServlet androidHttpServlet = WebMappingSet.getServlet(servletClass);
+                if (androidHttpServlet == null) {
+                    androidHttpServlet = createServlet(servletClass);
+                }
+                androidHttpServlet.doRequest(req, resp);
+                Log.e(TAG, "onDispatch: "+url+" -- "+mapping.getHtmlPath());
+            }catch (Exception e){
+                WebMapping _404 = WebMappingSet.findMapping(WebMappingSet._404);
+                String _404_htmlPath = _404.getHtmlPath();
+                write2OutputStream(_404_htmlPath,resp.getOutputStream());
+            }
+        }
+    }
+
+    private void write2OutputStream(String htmlPath, OutputStream os){
+        try {
+
+            InputStream in = assetManager.open(htmlPath, AssetManager.ACCESS_BUFFER);
+
+            byte[] buffer = new byte[1024];
+
+            int len;
+            while ((len = in.read(buffer))!=-1){
+                os.write(buffer,0,len);
+                os.flush();
+            }
+            in.close();
+        } catch (IOException ignored) {
+            write2OutputStream(WebMappingSet.findMapping(WebMappingSet._404).getHtmlPath(),os);
+        }
+    }
+
+    private void handleAsExtraRes(String uri, OutputStream os) {
+        try {
+            if(uri.startsWith("/"))
+                uri = uri.substring(1);
+            InputStream in = assetManager.open(uri, AssetManager.ACCESS_BUFFER);
+
+            int len = 0;
+            byte[] buf = new byte[1024];
+            while ((len = in.read(buf)) != -1){
+                os.write(buf,0,len);
+                os.flush();
+            }
+            in.close();
+        } catch (IOException ignored) {
+            // handleAsExtraRes(WebMappingSet._404,os);
+            ignored.printStackTrace();
+        }
     }
 }

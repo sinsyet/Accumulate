@@ -1,20 +1,13 @@
 package com.example.sample.servlets;
 
-import android.util.Log;
-
 import com.example.androidhttpserver.servlet.base.IAndroidServletRequest;
 import com.example.androidhttpserver.servlet.base.IAndroidServletResponse;
-import com.example.androidhttpserver.servlet.http.Cookie;
 import com.example.androidhttpserver.servlet.http.HttpStatus;
 import com.example.androidhttpserver.servlet.impl.AndroidHttpServlet;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Map;
 
 public class LoginServlet extends AndroidHttpServlet {
     private static final String TAG = "LoginServlet";
