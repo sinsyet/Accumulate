@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/ndklib" />
             <option value="$PROJECT_DIR$/sample" />
             <option value="$PROJECT_DIR$/viewlib" />
+            <option value="$PROJECT_DIR$/zzw" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

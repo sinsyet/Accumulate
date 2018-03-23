@@ -31,7 +31,7 @@ public class AndroidHttpServer extends NanoHTTPD {
     private Context ctx;
     private AssetManager assetManager;
 
-    public AndroidHttpServer(int port, Context ctx) {
+    public AndroidHttpServer(int port, Context ctx,String webinfo_path) {
         super(port);
         this.ctx = ctx;
         init();
@@ -44,7 +44,7 @@ public class AndroidHttpServer extends NanoHTTPD {
         * 查看apk的assets文件夹; 可以将apk后缀改为zip, 再解压即可
         */
         loadWebSet("webserver/web.xml");
-        loadWebSet("webserver/baseweb.xml");
+        loadWebSet(webinfo_path);
     }
 
     private void loadWebSet(String webxml){
@@ -129,7 +129,7 @@ public class AndroidHttpServer extends NanoHTTPD {
                           Map<String, String> headers,
                           Map<String, String> parms,
                           Map<String, String> files) {
-
+        Log.e(TAG, "serve: "+uri);
         WebMapping mapping = WebMappingSet.findMapping(uri);
         if(mapping == null){
             return handleAsExtraRes(uri);
