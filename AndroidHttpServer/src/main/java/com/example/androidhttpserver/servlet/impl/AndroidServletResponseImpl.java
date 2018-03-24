@@ -83,7 +83,7 @@ public class AndroidServletResponseImpl implements IAndroidServletResponse {
 
         if(path.startsWith("./")) {
             String value = "http://" + host + path.substring(1);
-            Log.e(TAG, "sendRedirect: ");
+            Log.e(TAG, "sendRedirect: "+value);
             mHeaders.put("Location", value);
             return;
         }

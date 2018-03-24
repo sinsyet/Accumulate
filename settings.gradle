@@ -1,1 +1,2 @@
-include ':app', ':viewlib', ':apphelper', ':sample', ':ndklib', ':appbase', ':AndroidHttpServer', ':zzw'
+include ':app', ':sample', ':zzw'
+include ':viewlib', ':apphelper', ':ndklib', ':appbase', ':AndroidHttpServer'

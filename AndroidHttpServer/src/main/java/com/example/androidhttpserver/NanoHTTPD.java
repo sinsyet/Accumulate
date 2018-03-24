@@ -7,6 +7,7 @@ import com.example.androidhttpserver.servlet.http.HttpStatus;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -162,6 +163,8 @@ public abstract class NanoHTTPD {
         }
     }
 
+    private static final String TAG = "NanoHTTPD";
+
     /**
      * Start the server.
      *
@@ -176,7 +179,9 @@ public abstract class NanoHTTPD {
             public void run() {
                 do {
                     try {
+                        Log.e(TAG, "run: before accept");
                         final Socket finalAccept = myServerSocket.accept();
+                        Log.e(TAG, "run: after accept");
                         registerConnection(finalAccept);
                         finalAccept.setSoTimeout(SOCKET_READ_TIMEOUT);
                         final InputStream inputStream = finalAccept.getInputStream();
@@ -592,12 +597,24 @@ public abstract class NanoHTTPD {
         private boolean chunkedTransfer;
 
         private List<String> cookieValues = new ArrayList<>();
+        private byte[] filesByteBuf;
+
+        private boolean isRespByFile;
         /**
          * Default constructor: response = HTTP_OK, mime = MIME_HTML and your supplied message
          */
         public Response(String msg) {
             this(HttpStatus.OK, MIME_HTML, msg);
         }
+
+        public Response(ByteArrayOutputStream baos){
+            isRespByFile = true;
+            this.status = HttpStatus.OK;
+            filesByteBuf = baos.toByteArray();
+            Log.e(TAG, "Response: "+filesByteBuf.length);
+        }
+
+        private static final String TAG = "Response";
 
         /**
          * Basic constructor.
@@ -671,7 +688,13 @@ public abstract class NanoHTTPD {
 
                 pw.print("Connection: keep-alive\r\n");
 
-                if (requestMethod != Method.HEAD && chunkedTransfer) {
+                if(isRespByFile){
+                    // 本方法中的print writer其实和outputstream是同一个输出流
+                    // 打印流用于输出头信息, 输出流用于传输真正的值
+                    // sendAsFile(outputStream);
+                    sendAsFile(outputStream, pw);
+                }
+                else if (requestMethod != Method.HEAD && chunkedTransfer) {
                     sendAsChunked(outputStream, pw);
                 } else {
                     sendAsFixedLength(outputStream, pw);
@@ -680,6 +703,24 @@ public abstract class NanoHTTPD {
                 safeClose(data);
             } catch (IOException ioe) {
                 // Couldn't write? No can do.
+            }
+        }
+
+        private void sendAsFile(OutputStream os,PrintWriter pw) {
+            int pending = filesByteBuf != null ? filesByteBuf.length : 0; // This is to support partial sends, see serveFile()
+            pw.print("Content-Length: "+pending+"\r\n");
+
+            pw.print("\r\n");
+            pw.flush();
+
+            try {
+
+                Log.e(TAG, "sendAsFile: before");
+                os.write(filesByteBuf);
+                os.flush();
+                Log.e(TAG, "sendAsFile: after");
+            } catch (IOException e) {
+                Log.e("Response", "sendAsFile: "+e.getMessage());
             }
         }
 

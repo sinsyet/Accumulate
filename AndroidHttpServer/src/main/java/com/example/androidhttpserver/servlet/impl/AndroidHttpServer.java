@@ -43,7 +43,7 @@ public class AndroidHttpServer extends NanoHTTPD {
         *
         * 查看apk的assets文件夹; 可以将apk后缀改为zip, 再解压即可
         */
-        loadWebSet("webserver/web.xml");
+        loadWebSet("webserver/baseweb.xml");
         loadWebSet(webinfo_path);
     }
 
@@ -129,6 +129,13 @@ public class AndroidHttpServer extends NanoHTTPD {
                           Map<String, String> headers,
                           Map<String, String> parms,
                           Map<String, String> files) {
+
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            Log.e(TAG, "serve: " + uri + " k: "+key+" v: "+value);
+        }
+
         Log.e(TAG, "serve: "+uri);
         WebMapping mapping = WebMappingSet.findMapping(uri);
         if(mapping == null){
@@ -174,19 +181,21 @@ public class AndroidHttpServer extends NanoHTTPD {
         try {
             if(uri.startsWith("/"))
                 uri = uri.substring(1);
+            Log.e(TAG, "handleAsExtraRes: "+uri);
             InputStream in = assetManager.open(uri, AssetManager.ACCESS_BUFFER);
 
-            byte[] buffer = new byte[1024 * 1024];
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
 
-            int temp = 0;
             int len = 0;
-            while((temp=in.read())!=-1){
-                buffer[len]=(byte)temp;
-                len++;
+            while((len=in.read(buffer))!=-1){
+               baos.write(buffer,0,len);
             }
             in.close();
-            return new NanoHTTPD.Response(new String(buffer,0,len));
+            return new NanoHTTPD.Response(baos);
         } catch (IOException ignored) {
+            Log.e(TAG, "handleAsExtraRes: "+ignored.getMessage());
+            ignored.printStackTrace();
         }
         return handleAsHtml(WebMappingSet.findMapping(WebMappingSet._404).getHtmlPath());
     }
@@ -221,7 +230,7 @@ public class AndroidHttpServer extends NanoHTTPD {
 
     private Response handleAsHtml(String htmlPath){
         try {
-
+            Log.e(TAG, "handleAsHtml: "+htmlPath);
             InputStream in = assetManager.open(htmlPath, AssetManager.ACCESS_BUFFER);
 
             byte[] buffer = new byte[1024];
