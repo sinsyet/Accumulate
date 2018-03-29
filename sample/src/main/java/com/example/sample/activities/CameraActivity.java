@@ -14,6 +14,7 @@ import com.example.apphelper.AppHelper;
 import com.example.sample.R;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
 
 public class CameraActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener, SeekBar.OnSeekBarChangeListener {
     private static final String TAG = "CameraActivity";
@@ -93,5 +94,21 @@ public class CameraActivity extends AppCompatActivity implements TextureView.Sur
         int maxZoom = params.getMaxZoom();
         params.setZoom((int) (maxZoom * (mCurZoomProgress  * 1.0f/ 100)));
         mCamera.setParameters(params);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mCamera != null) {
+            try {
+                mCamera.stopPreview();
+            }catch (Exception e){}
+
+            try{
+                mCamera.release();
+            }catch (Exception e){}
+
+            mCamera = null;
+        }
     }
 }
