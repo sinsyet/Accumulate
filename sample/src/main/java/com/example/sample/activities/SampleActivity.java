@@ -27,6 +27,7 @@ public class SampleActivity extends AppCompatActivity implements AdapterView.OnI
         mAtys.add(GraphActivity.class);
         mAtys.add(WebViewActivity.class);
         mAtys.add(ViewActivity.class);
+        mAtys.add(CameraActivity.class);
     }
 
     @Override
