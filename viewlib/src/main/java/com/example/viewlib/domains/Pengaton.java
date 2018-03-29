@@ -3,6 +3,7 @@ package com.example.viewlib.domains;
 
 import android.graphics.Path;
 import android.graphics.PointF;
+import android.util.Log;
 
 public class Pengaton {
     private static final String TAG = "Pengaton";
@@ -109,12 +110,18 @@ public class Pengaton {
         mPoints[9].set(cx + dx3, cy + dy3);
 
         // 中心点
-        mCenter.set(cx + dx1, cy + (dy1 + dy2) / 2);
+        mCenter.set(cx + dx1 - dx1, cy + (dy1 + dy2) / 2 - (dy1 + dy2) / 2);
+
 
         mPath.reset();
+        mPoints[0].x -=  dx1;
+        mPoints[0].y -=  (dy1 + dy2) / 2;
         mPath.moveTo(mPoints[0].x, mPoints[0].y);
         for (int i = 1; i < 10; i++) {
+            mPoints[i].x -=  dx1;
+            mPoints[i].y -=  (dy1 + dy2) / 2;
             mPath.lineTo(mPoints[i].x, mPoints[i].y);
         }
+        Log.e(TAG, "calcPentagramPath: ");
     }
 }

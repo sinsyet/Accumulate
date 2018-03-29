@@ -19,7 +19,8 @@
         <activity android:name=".activities.SampleActivity" />
         <activity android:name=".activities.SampleFragmentActivity" />
         <activity android:name=".activities.GraphActivity" />
-        <activity android:name=".activities.WebViewActivity"></activity>
+        <activity android:name=".activities.WebViewActivity" />
+        <activity android:name=".activities.ViewActivity"></activity>
     </application>
 
 </manifest>

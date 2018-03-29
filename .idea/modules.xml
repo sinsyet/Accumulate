@@ -11,7 +11,6 @@
       <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" />
       <module fileurl="file://$PROJECT_DIR$/viewlib/viewlib.iml" filepath="$PROJECT_DIR$/viewlib/viewlib.iml" />
       <module fileurl="file://$PROJECT_DIR$/zzw/zzw.iml" filepath="$PROJECT_DIR$/zzw/zzw.iml" />
-      <module fileurl="file://E:\code\Accumulate\zzw\zzw.iml" filepath="E:\code\Accumulate\zzw\zzw.iml" />
     </modules>
   </component>
 </project>
