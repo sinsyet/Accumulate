@@ -11,6 +11,8 @@ import android.view.WindowManager;
 
 
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author YGX
@@ -20,9 +22,15 @@ import java.util.Random;
 
 public class AppHelper {
 
+    private static ExecutorService sPool = Executors.newCachedThreadPool();
 
     private static Handler sMainHandler = new Handler(Looper.getMainLooper());
 
+    public static void run(Runnable r){
+        if(r == null) return;
+
+        sPool.execute(r);
+    }
 
     public static boolean isNetActive(Context ctx) {
         // 判断网络状态
