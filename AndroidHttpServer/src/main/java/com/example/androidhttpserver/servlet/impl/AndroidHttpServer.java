@@ -179,7 +179,7 @@ public class AndroidHttpServer extends NanoHTTPD {
 
     private Response handleAsExtraRes(String uri) {
         try {
-            if(uri.startsWith("/"))
+            while (uri.startsWith("/"))
                 uri = uri.substring(1);
             Log.e(TAG, "handleAsExtraRes: "+uri);
             InputStream in = assetManager.open(uri, AssetManager.ACCESS_BUFFER);
