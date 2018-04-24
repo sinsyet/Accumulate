@@ -3,6 +3,8 @@ package com.example.sample.tasks;
 
 import android.content.Context;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.example.dblib.DBManager;
@@ -16,25 +18,43 @@ public class ScanSDTask implements Runnable {
     private static final String TAG = "ScanSDTask";
     private DaoSession daoSession;
     private FilePathDao filePathDao;
+    private Observer mObserver;
+
+    private Handler mHandler = new Handler(Looper.getMainLooper());
+
+    public interface Observer {
+        void onLoadFinish();
+    }
+
+    public void setObserver(Observer observer) {
+        mObserver = observer;
+    }
 
     public ScanSDTask(Context ctx, String name) {
-        daoSession = DBManager.getDaoSession(ctx,name);
+        daoSession = DBManager.getDaoSession(ctx, name);
     }
 
     @Override
     public void run() {
         File file = Environment.getExternalStorageDirectory();
         filePathDao = daoSession.getFilePathDao();
-        long start  = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
         isRunning = true;
         daoSession.clear();
         filePathDao.deleteAll();
-        Log.e(TAG, "run: "+file.getAbsolutePath()+" // start");
+        Log.e(TAG, "run: " + file.getAbsolutePath() + " // start");
         traverse(file);
 
         isRunning = false;
-        long end  = System.currentTimeMillis();
-        Log.e(TAG, "run: "+(end-start));
+        long end = System.currentTimeMillis();
+        Log.e(TAG, "run: " + (end - start));
+
+        if (mObserver != null)
+            mHandler.post(() -> {
+                if (mObserver != null) {
+                    mObserver.onLoadFinish();
+                }
+            });
     }
 
     private void traverse(File file) {
@@ -50,7 +70,7 @@ public class ScanSDTask implements Runnable {
             String path = f.getAbsolutePath();
             FilePath entity = new FilePath(name, path, parentPath, directory ? FilePath.TYPE_DIR : FilePath.TYPE_FILE, l_m_d);
             filePathDao.insert(entity);
-            Log.e(TAG, "traverse: "+entity.toString());
+            Log.e(TAG, "traverse: " + entity.toString());
             if (f.isDirectory()) {
                 traverse(f);
             }
@@ -58,7 +78,8 @@ public class ScanSDTask implements Runnable {
     }
 
     private boolean isRunning;
-    public boolean isRunning(){
+
+    public boolean isRunning() {
         return isRunning;
     }
 

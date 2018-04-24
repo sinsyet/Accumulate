@@ -40,7 +40,8 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".activities.DBActivity"></activity>
+        <activity android:name=".activities.DBActivity" />
+        <activity android:name=".activities.PreviewActivity"></activity>
     </application>
 
 </manifest>
