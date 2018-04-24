@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.example.dblib.DBManager;
 import com.example.sample.LoadActivity;
 import com.example.sample.R;
 import com.example.sample.adapters.SampleAtyAdapter;
@@ -29,6 +30,7 @@ public class SampleActivity extends AppCompatActivity implements AdapterView.OnI
         mAtys.add(ViewActivity.class);
         mAtys.add(CameraActivity.class);
         mAtys.add(InitActivity.class);
+        mAtys.add(DBActivity.class);
     }
 
     @Override

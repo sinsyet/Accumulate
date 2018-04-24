@@ -33,7 +33,14 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".activities.InitActivity"></activity>
+        <activity android:name=".activities.InitActivity" />
+
+        <service
+            android:name=".services.ScanService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".activities.DBActivity"></activity>
     </application>
 
 </manifest>

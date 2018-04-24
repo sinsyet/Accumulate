@@ -39,4 +39,5 @@ dependencies {
     compile project(':apphelper')
     compile project(path: ':appbase')
     implementation project(':AndroidHttpServer')
+    implementation project(':DBLib')
 }
