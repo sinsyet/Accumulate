@@ -14,7 +14,7 @@ import java.io.File;
 
 public class ScanSDTask implements Runnable {
     private static final String TAG = "ScanSDTask";
-    private final DaoSession daoSession;
+    private DaoSession daoSession;
     private FilePathDao filePathDao;
 
     public ScanSDTask(Context ctx, String name) {

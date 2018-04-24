@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.example.sample.activities.DBActivity">
 
    <Button
@@ -12,5 +13,19 @@
        android:text="SCAN"
        android:layout_margin="5dp"
        android:layout_height="wrap_content" />
+
+   <View
+       android:layout_margin="5dp"
+       android:layout_width="match_parent"
+       android:layout_height="1dp"
+       android:background="@color/colorAccent"
+       />
+
+   <ListView
+       android:id="@+id/db_lv_files"
+       android:layout_width="match_parent"
+       android:layout_height="0dp"
+       android:layout_weight="1"
+       />
 
 </LinearLayout>
