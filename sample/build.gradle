@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
         applicationId "com.example.sample"
@@ -34,10 +34,10 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:26.1.0'
     testCompile 'junit:junit:4.12'
-    compile project(':viewlib')
-    compile project(':ndklib')
-    compile project(':apphelper')
-    compile project(path: ':appbase')
+    implementation project(':viewlib')
+    implementation project(':ndklib')
+    implementation project(':apphelper')
+    implementation project(path: ':appbase')
     implementation project(':AndroidHttpServer')
     implementation project(':DBLib')
 }
