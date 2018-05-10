@@ -34,7 +34,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     /* if use implementation instead of compile, the child module won't access greendao */
-    compile 'org.greenrobot:greendao:3.2.2' // add library
+    api 'org.greenrobot:greendao:3.2.2' // add library
 }
 
 

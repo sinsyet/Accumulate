@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">FaceDemo</string>
+    <string name="s_switch">SWITCH</string>
+    <string name="app_id">56a9e165</string>
 </resources>
