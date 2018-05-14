@@ -74,10 +74,11 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void run() {
             Camera camera = Camera.open(mDefaultCameraId);
-            camera.setDisplayOrientation(
-                    AppHelper.getCameraDisplayRotation(
-                            getApplicationContext(),
-                            mDefaultCameraId));
+            int degrees = AppHelper.getCameraDisplayRotation(
+                    getApplicationContext(),
+                    mDefaultCameraId);
+            camera.setDisplayOrientation(degrees);
+            setDirectionValueByDegree(degrees);
 
             camera.startPreview();
             try {
@@ -92,10 +93,28 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
+    private int mDetectorDirection;
+    private void setDirectionValueByDegree(int degree) {
+        switch (degree) {
+            case 0:
+                mDetectorDirection = 0;
+                break;
+            case 90:
+                mDetectorDirection = 1;
+                break;
+            case 180:
+                mDetectorDirection = 2;
+                break;
+            case 270:
+                mDetectorDirection = 3;
+                break;
+        }
+    }
     private Camera.PreviewCallback mPreviewCallback = new Camera.PreviewCallback() {
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
 
+            // String result = mFaceDetector.trackNV21(buffer, mPreviewWidth, mPreviewHeight, 1, mDetectorDirection);
         }
     };
 
@@ -104,4 +123,3 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 }
-d
