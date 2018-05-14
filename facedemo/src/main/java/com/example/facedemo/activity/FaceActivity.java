@@ -4,8 +4,10 @@ import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewTreeObserver;
 
 import com.example.apphelper.AppHelper;
 import com.example.apphelper.ToastUtil;
@@ -22,6 +24,7 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
     private SurfaceTexture mSurface;
     private int mDefaultCameraId;
     private FaceDetector mFaceDetector;
+    private static final String TAG = "FaceActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +50,7 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
                 mSurface = surface;
                 AppHelper.run(mDisplayCamera);
+                AppHelper.run(mFaceDecoder);
             }
 
             @Override
@@ -65,6 +69,15 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
         mTrv.setSurfaceTextureListener(mSurfaceTextureListener);
+        mTrv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mTrv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                mPreviewHeight = mTrv.getHeight();
+                mPreviewWidth = mTrv.getWidth();
+                Log.e(TAG, "onResume: "+mPreviewWidth+" // "+mPreviewHeight);
+            }
+        });
     }
 
 
@@ -110,11 +123,48 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    private byte[] nv21;
+    private boolean isBufferEmpty;
     private Camera.PreviewCallback mPreviewCallback = new Camera.PreviewCallback() {
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
-
+            if(!isBufferEmpty) return;
             // String result = mFaceDetector.trackNV21(buffer, mPreviewWidth, mPreviewHeight, 1, mDetectorDirection);
+            if(nv21 == null || nv21.length < data.length){
+                nv21 = new byte[data.length];
+                Log.e(TAG, "onPreviewFrame: "+Thread.currentThread().getName());
+            }
+            long start = System.currentTimeMillis();
+            System.arraycopy(data,0,nv21,0,data.length);
+            long end = System.currentTimeMillis();
+            Log.e(TAG, "onPreviewFrame: "+(end-start));
+            isBufferEmpty = false;
+        }
+    };
+
+    private boolean mFaceFlag;
+
+    // 显示图像的控件宽高
+    private int mPreviewWidth;
+    public int mPreviewHeight;
+    private Runnable mFaceDecoder = new Runnable() {
+
+        @Override
+        public void run() {
+            mFaceFlag = true;
+            while (mFaceFlag){
+                if(isBufferEmpty) continue;
+                String result = mFaceDetector.trackNV21(nv21, mPreviewWidth, mPreviewHeight, 1, mDetectorDirection);
+                isBufferEmpty = true;
+                Log.e(TAG, "run: "+result);
+            }
         }
     };
 

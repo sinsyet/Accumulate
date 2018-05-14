@@ -7,9 +7,10 @@
     tools:context=".activity.FaceActivity">
 
     <TextureView
+        android:layout_gravity="center"
         android:id="@+id/face_trv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="320dp"
+        android:layout_height="240dp" />
 
     <Button
         android:id="@+id/face_btn_switch"
