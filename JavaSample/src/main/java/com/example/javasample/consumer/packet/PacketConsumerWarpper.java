@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
 public abstract class PacketConsumerWarpper extends AbsConsumer<String, Object> {
     private static final String TAG = "PacketConsumerWarpper";
     private String[] mRegexs = {
-            "\"t\":[\\d]{1,}",
-            "\"mid\":[\\d]{1,}"
+            "\"t\":([\\d]{1,})",
+            "\"mid\":([\\d]{1,})",
     };
     Pattern p[];
 
@@ -32,6 +32,7 @@ public abstract class PacketConsumerWarpper extends AbsConsumer<String, Object> 
 
     @Override
     protected boolean handleConsume(String param, Object... params) {
+        Log.e(TAG, "handleConsume: "+param);
         int t = getT(param);
         InetSocketAddress remote = null;
         DatagramChannel channel = null;
@@ -95,6 +96,9 @@ public abstract class PacketConsumerWarpper extends AbsConsumer<String, Object> 
 
     private int getT(String s){
         Matcher matcher = p[0].matcher(s);
+        if (!matcher.find()) {
+            return 0;
+        }
         String group = matcher.group();
         String t_str = group.replace("\"t\":", "");
         int t = 0;
@@ -107,6 +111,7 @@ public abstract class PacketConsumerWarpper extends AbsConsumer<String, Object> 
 
     private long getMid(String s){
         Matcher matcher = p[1].matcher(s);
+        if(!matcher.find()) return -1;
         String group = matcher.group();
         String mid_str = group.replace("\"mid\":", "");
         long mid = -1;

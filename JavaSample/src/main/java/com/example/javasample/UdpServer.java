@@ -1,5 +1,11 @@
 package com.example.javasample;
 
+import com.example.javasample.channel.IChannelHandler;
+import com.example.javasample.channel.UdpChannelHandlerWrapper;
+import com.example.javasample.consumer.packet.Packet_T1_Consumer;
+import com.example.javasample.utils.AppHelper;
+import com.example.javasample.utils.Log;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.DatagramChannel;
@@ -8,11 +14,12 @@ import java.nio.channels.Selector;
 import java.util.Set;
 
 public class UdpServer {
-
+    private static final String TAG = "UdpServer";
     private DatagramChannel mChannel;
     private Selector mSelector;
+    private IChannelHandler<String, Object> udpHandler;
 
-    private UdpServer(int port) throws IOException {
+    public UdpServer(int port) throws IOException {
         DatagramChannel channel = null;
         try {
             channel = initChannel(port);
@@ -22,6 +29,7 @@ public class UdpServer {
             channel.register(selector, SelectionKey.OP_READ);
             mChannel = channel;
             mSelector = selector;
+            Log.e(TAG, "UdpServer: create success");
         } catch (IOException e) {
             if(channel != null){
                 try {
@@ -29,6 +37,7 @@ public class UdpServer {
                 } catch (IOException e1) {
                 }
             }
+            Log.e(TAG, "UdpServer: create fail");
             throw e;
         }
     }
@@ -41,7 +50,26 @@ public class UdpServer {
     }
 
     public void start(){
+        udpHandler = new UdpChannelHandlerWrapper();
+        udpHandler.appendConsumer(new Packet_T1_Consumer());
+        AppHelper.runOnPool(mServerLoop);
+    }
+    public void stop(){
+        loopFlag = false;
+        if(mChannel != null){
+            try {
+                mChannel.close();
+            } catch (IOException e) {
 
+            }
+        }
+
+        if(mSelector != null){
+            try {
+                mSelector.close();
+            } catch (IOException e) {
+            }
+        }
     }
 
     private boolean loopFlag = false;
@@ -49,6 +77,7 @@ public class UdpServer {
         @Override
         public void run() {
             loopFlag = true;
+            Log.e(TAG, "run: server loop start ...");
             while (loopFlag){
                 try {
                     int select = mSelector.select(1000);
@@ -58,8 +87,11 @@ public class UdpServer {
 
                     Set<SelectionKey> keys = mSelector.selectedKeys();
                     for (SelectionKey key : keys) {
-
+                        if (udpHandler != null) {
+                            udpHandler.onSelect(key);
+                        }
                     }
+                    keys.clear();
                 } catch (IOException e) {
 
                 }

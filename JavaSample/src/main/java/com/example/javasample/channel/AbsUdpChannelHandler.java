@@ -5,7 +5,7 @@ import com.example.javasample.utils.Log;
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
 
-public abstract class AbsUdpChannelHandler implements IChannelHandler {
+public abstract class AbsUdpChannelHandler<P1,P2> implements IChannelHandler<P1,P2> {
     private static final String TAG = "AbsUdpChannelHandler";
     @Override
     public void onAccept(SelectionKey key) {
