@@ -14,8 +14,13 @@ public class AppHelper {
     }
 
     static ExecutorService pool = Executors.newCachedThreadPool();
+
     public static void runOnPool(Runnable r){
         if(r == null) return;
         pool.execute(r);
+    }
+
+    public static void shutDownPool(){
+        pool.shutdown();
     }
 }

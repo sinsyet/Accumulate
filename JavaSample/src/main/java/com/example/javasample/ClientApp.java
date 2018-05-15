@@ -22,15 +22,21 @@ public class ClientApp {
                 recvFlag = true;
                 while (recvFlag) {
                     try {
+                        Log.e(TAG, "run: before recv");
                         udp.receive(packet);
                         byte[] data = packet.getData();
                         int len = packet.getLength();
                         int offset = packet.getOffset();
                         Log.e(TAG,"recv client: "+new String(data,offset,len));
                     } catch (IOException e) {
-
+                        e.printStackTrace();
                     }
+                    recvFlag = false;
                 }
+                udp.close();
+                Log.e(TAG, "run: finish");
+                AppHelper.shutDownPool();
+
             }
         });
 
@@ -41,6 +47,6 @@ public class ClientApp {
         DatagramPacket packet = new DatagramPacket(
                 reqMsgBytes, 0, reqMsgBytes.length, new InetSocketAddress("127.0.0.1", 12200));
         udp.send(packet);
-        recvFlag =false;
+
     }
 }

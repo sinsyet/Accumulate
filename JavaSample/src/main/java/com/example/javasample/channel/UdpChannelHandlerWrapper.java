@@ -14,11 +14,16 @@ public class UdpChannelHandlerWrapper extends AbsUdpChannelHandler<String,Object
     private AbsConsumer<String, Object> mConsumer;
     @Override
     public void onRead(SelectionKey key) throws IOException {
-        DatagramChannel channel = (DatagramChannel) key.channel();
-        InetSocketAddress remote = (InetSocketAddress) channel.receive(buf);
-        String msg = AppHelper.getMsgByByteBuffer(buf);
+        final DatagramChannel channel = (DatagramChannel) key.channel();
+        final InetSocketAddress remote = (InetSocketAddress) channel.receive(buf);
+        final String msg = AppHelper.getMsgByByteBuffer(buf);
         if(mConsumer != null){
-            mConsumer.postConsume(msg,remote,channel);
+            AppHelper.runOnPool(new Runnable() {
+                @Override
+                public void run() {
+                    mConsumer.postConsume(msg,remote,channel);
+                }
+            });
         }
     }
 
