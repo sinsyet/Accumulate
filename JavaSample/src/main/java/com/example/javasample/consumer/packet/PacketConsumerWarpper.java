@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
 public abstract class PacketConsumerWarpper extends AbsConsumer<String, Object> {
     private static final String TAG = "PacketConsumerWarpper";
     private String[] mRegexs = {
-            "\"t\":([\\d]{1,})",
-            "\"mid\":([\\d]{1,})",
+            "\"t\":[\\d]{1,}",
+            "\"mid\":[\\d]{1,}",
     };
     Pattern p[];
 
@@ -116,7 +116,7 @@ public abstract class PacketConsumerWarpper extends AbsConsumer<String, Object> 
         String mid_str = group.replace("\"mid\":", "");
         long mid = -1;
         try{
-            mid = Integer.parseInt(mid_str.trim());
+            mid = Long.parseLong(mid_str.trim());
         }catch (Exception e){
         }
         return mid;

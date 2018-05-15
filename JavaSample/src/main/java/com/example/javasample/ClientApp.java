@@ -17,7 +17,7 @@ public class ClientApp {
         AppHelper.runOnPool(new Runnable() {
             @Override
             public void run() {
-                byte[] buf = new byte[64];
+                byte[] buf = new byte[1024];
                 DatagramPacket packet = new DatagramPacket(buf, 0, buf.length);
                 recvFlag = true;
                 while (recvFlag) {

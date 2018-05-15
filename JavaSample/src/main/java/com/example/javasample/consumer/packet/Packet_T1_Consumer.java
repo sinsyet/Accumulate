@@ -9,8 +9,7 @@ import java.util.Locale;
 
 public class Packet_T1_Consumer extends PacketConsumerWarpper {
     private String mResp = "{\"t\":%d,\"mid\":%d,\"msg\":{" +
-            "\"host\":\"%s\",\"port\":%d"
-            + "}}";
+            "\"host\":\"%s\",\"port\":%d}}";
     private static final String TAG = "Packet_T1_Consumer";
     @Override
     protected boolean onHandlePacket(PacketMsg msg) {
@@ -23,6 +22,7 @@ public class Packet_T1_Consumer extends PacketConsumerWarpper {
         int port = remote.getPort();
         String resp = String.format(Locale.CHINA, mResp, -msg.getT(), msg.getMid(), hostAddress, port);
         try {
+            Log.e(TAG, "onHandlePacket success: "+resp);
             msg.getChannel().send(ByteBuffer.wrap(resp.getBytes("UTF-8")),remote);
         } catch (IOException e) {
             Log.e(TAG,"onHandlePacket: "+e.getMessage());
