@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/Accumulate.iml" filepath="$PROJECT_DIR$/Accumulate.iml" />
       <module fileurl="file://$PROJECT_DIR$/AndroidHttpServer/AndroidHttpServer.iml" filepath="$PROJECT_DIR$/AndroidHttpServer/AndroidHttpServer.iml" />
       <module fileurl="file://$PROJECT_DIR$/DBLib/DBLib.iml" filepath="$PROJECT_DIR$/DBLib/DBLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaSample/JavaSample.iml" filepath="$PROJECT_DIR$/JavaSample/JavaSample.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/appbase/appbase.iml" filepath="$PROJECT_DIR$/appbase/appbase.iml" />
       <module fileurl="file://$PROJECT_DIR$/apphelper/apphelper.iml" filepath="$PROJECT_DIR$/apphelper/apphelper.iml" />
