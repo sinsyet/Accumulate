@@ -104,4 +104,3 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 }
-d
