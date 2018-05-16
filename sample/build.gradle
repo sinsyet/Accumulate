@@ -40,4 +40,5 @@ dependencies {
     implementation project(path: ':appbase')
     implementation project(':AndroidHttpServer')
     implementation project(':DBLib')
+    implementation project(':facedemo')
 }
