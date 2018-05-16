@@ -15,14 +15,12 @@ import com.example.facedemo.R;
 import com.iflytek.cloud.FaceDetector;
 import com.iflytek.cloud.SpeechUtility;
 
-import java.io.IOException;
-
 public class FaceActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextureView mTrv;
     private TextureView.SurfaceTextureListener mSurfaceTextureListener;
     private SurfaceTexture mSurface;
-    private int mDefaultCameraId;
+    private int mCurCameraId;
     private FaceDetector mFaceDetector;
     private static final String TAG = "FaceActivity";
 
@@ -34,15 +32,17 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
         SpeechUtility.createUtility(this, "appid=" + getString(R.string.app_id));
         mFaceDetector = FaceDetector.createDetector(getApplicationContext(), null);
         findView();
+        numberOfCameras = Camera.getNumberOfCameras();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mFaceDetector.destroy();
+        AppHelper.run(mReleaseCurCamera);
     }
 
-    void findView(){
+    void findView() {
         findViewById(R.id.face_btn_switch).setOnClickListener(this);
         mTrv = findViewById(R.id.face_trv);
         mSurfaceTextureListener = new TextureView.SurfaceTextureListener() {
@@ -75,7 +75,7 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
                 mTrv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 mPreviewHeight = mTrv.getHeight();
                 mPreviewWidth = mTrv.getWidth();
-                Log.e(TAG, "onResume: "+mPreviewWidth+" // "+mPreviewHeight);
+                Log.e(TAG, "onGlobalLayout: "+mPreviewHeight+" // "+mPreviewWidth);
             }
         });
     }
@@ -86,10 +86,10 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
     private Runnable mDisplayCamera = new Runnable() {
         @Override
         public void run() {
-            Camera camera = Camera.open(mDefaultCameraId);
+            Camera camera = Camera.open(mCurCameraId);
             int degrees = AppHelper.getCameraDisplayRotation(
                     getApplicationContext(),
-                    mDefaultCameraId);
+                    mCurCameraId);
             camera.setDisplayOrientation(degrees);
             setDirectionValueByDegree(degrees);
 
@@ -100,13 +100,14 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
                 mCamera = camera;
 
             } catch (Exception e) {
-                ToastUtil.show(getApplicationContext(),"Open Camera Fail");
+                ToastUtil.show(getApplicationContext(), "Open Camera Fail");
             }
 
         }
     };
 
     private int mDetectorDirection;
+
     private void setDirectionValueByDegree(int degree) {
         switch (degree) {
             case 0:
@@ -122,6 +123,7 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
                 mDetectorDirection = 3;
                 break;
         }
+        Log.e(TAG, "setDirectionValueByDegree: "+degree+" // "+mDetectorDirection);
     }
 
     @Override
@@ -131,21 +133,21 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private byte[] nv21;
-    private boolean isBufferEmpty;
+    private volatile boolean isBufferEmpty;
     private Camera.PreviewCallback mPreviewCallback = new Camera.PreviewCallback() {
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
-            if(!isBufferEmpty) return;
-            // String result = mFaceDetector.trackNV21(buffer, mPreviewWidth, mPreviewHeight, 1, mDetectorDirection);
-            if(nv21 == null || nv21.length < data.length){
+//            long start = System.currentTimeMillis();
+
+            if (!isBufferEmpty) return;
+            if (nv21 == null || nv21.length < data.length) {
                 nv21 = new byte[data.length];
-                Log.e(TAG, "onPreviewFrame: "+Thread.currentThread().getName());
+                // Log.e(TAG, "onPreviewFrame: " + Thread.currentThread().getName() + (System.currentTimeMillis() - start));
             }
-            long start = System.currentTimeMillis();
-            System.arraycopy(data,0,nv21,0,data.length);
+            System.arraycopy(data, 0, nv21, 0, data.length);
             long end = System.currentTimeMillis();
-            Log.e(TAG, "onPreviewFrame: "+(end-start));
             isBufferEmpty = false;
+            // Log.e(TAG, "onPreviewFrame: " + (end - start));
         }
     };
 
@@ -159,17 +161,57 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void run() {
             mFaceFlag = true;
-            while (mFaceFlag){
-                if(isBufferEmpty) continue;
+            while (mFaceFlag) {
+                if (isBufferEmpty) continue;
                 String result = mFaceDetector.trackNV21(nv21, mPreviewWidth, mPreviewHeight, 1, mDetectorDirection);
                 isBufferEmpty = true;
-                Log.e(TAG, "run: "+result);
+                Log.e(TAG, "run: " + result);
             }
+        }
+    };
+
+    private Runnable mReleaseCurCamera = new Runnable() {
+        @Override
+        public void run() {
+            if (mCamera == null) {
+                return;
+            }
+
+            mCamera.setPreviewCallback(null);
+            try {
+                mCamera.stopPreview();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                mCamera.release();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            mCamera = null;
+        }
+    };
+
+    private Runnable mReleaseCurCameraAnsSwitchCamera = new Runnable() {
+        @Override
+        public void run() {
+            mReleaseCurCamera.run();
+            mCurCameraId ++;
+            if(mCurCameraId >= numberOfCameras) mCurCameraId = 0;
+            mDisplayCamera.run();
         }
     };
 
     @Override
     public void onClick(View v) {
+        int vId = v.getId();
+        if (vId == R.id.face_btn_switch) {
+            switchCamera();
+        }
+    }
 
+    private void switchCamera() {
+        AppHelper.run(mReleaseCurCameraAnsSwitchCamera);
     }
 }
