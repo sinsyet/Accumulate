@@ -1,19 +1,27 @@
 package com.example.facedemo.activity;
 
+import android.graphics.ImageFormat;
+import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.FrameLayout;
 
 import com.example.apphelper.AppHelper;
 import com.example.apphelper.ToastUtil;
 import com.example.facedemo.R;
 import com.iflytek.cloud.FaceDetector;
 import com.iflytek.cloud.SpeechUtility;
+
+import java.util.List;
 
 public class FaceActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -23,6 +31,9 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
     private int mCurCameraId;
     private FaceDetector mFaceDetector;
     private static final String TAG = "FaceActivity";
+
+    private int mHeight = 480;
+    private int mWidth  = 640;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +56,9 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
     void findView() {
         findViewById(R.id.face_btn_switch).setOnClickListener(this);
         mTrv = findViewById(R.id.face_trv);
+
+
+
         mSurfaceTextureListener = new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
@@ -68,16 +82,30 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         };
-        mTrv.setSurfaceTextureListener(mSurfaceTextureListener);
+
         mTrv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 mTrv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                mPreviewHeight = mTrv.getHeight();
-                mPreviewWidth = mTrv.getWidth();
-                Log.e(TAG, "onGlobalLayout: "+mPreviewHeight+" // "+mPreviewWidth);
+
+                initPreviewViewLayoutParams();
             }
         });
+    }
+
+    private void initPreviewViewLayoutParams() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int widthPixels = metrics.widthPixels;
+
+
+       //  float max_rate = Math.max(height * 1.0f / heightPixels, width * 1.0f / widthPixels);
+        float rate = mHeight*1.0f / mWidth;  // -> rate = height / width, width
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                (int)(widthPixels),
+                (int)(widthPixels * rate));
+        mTrv.setLayoutParams(params);
+        mTrv.setSurfaceTextureListener(mSurfaceTextureListener);
     }
 
 
@@ -92,7 +120,24 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
                     mCurCameraId);
             camera.setDisplayOrientation(degrees);
             setDirectionValueByDegree(degrees);
+            Camera.Parameters parameters = camera.getParameters();
+            parameters.setPictureFormat(PixelFormat.JPEG);
+            parameters.setPreviewFormat(ImageFormat.NV21);
 
+            List<Camera.Size> sizes = camera.getParameters().getSupportedPreviewSizes();
+            Camera.Size tmp = null;
+            for (Camera.Size size:sizes){
+                Log.e(TAG, "run: support size: "+size.width+" // "+size.height);
+                if(tmp == null) tmp = size;
+                else if(tmp.height < size.height) tmp = size;
+            }
+            if(tmp != null){
+                Log.e(TAG, "run: max size: "+tmp.height+" // "+tmp.width);
+                mWidth = tmp.width;
+                mHeight = tmp.height;
+            }
+            parameters.setPreviewSize(mWidth,mHeight);
+            camera.setParameters(parameters);
             camera.startPreview();
             try {
                 camera.setPreviewTexture(mSurface);
@@ -163,7 +208,7 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
             mFaceFlag = true;
             while (mFaceFlag) {
                 if (isBufferEmpty) continue;
-                String result = mFaceDetector.trackNV21(nv21, mPreviewWidth, mPreviewHeight, 1, mDetectorDirection);
+                String result = mFaceDetector.trackNV21(nv21, mWidth, mHeight, 1, mDetectorDirection);
                 isBufferEmpty = true;
                 Log.e(TAG, "run: " + result);
             }
