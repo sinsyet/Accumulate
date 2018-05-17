@@ -21,7 +21,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
+    android{
+        useLibrary 'org.apache.http.legacy'
+    }
 }
 
 dependencies {
@@ -34,4 +36,5 @@ dependencies {
     implementation files('libs/Msc.jar')
     implementation project(':appbase')
     implementation project(':apphelper')
+    implementation files('libs/sun.misc.BASE64Decoder.jar')
 }

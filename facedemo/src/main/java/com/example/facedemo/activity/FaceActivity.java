@@ -1,7 +1,12 @@
 package com.example.facedemo.activity;
 
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.support.v7.app.AppCompatActivity;
@@ -9,23 +14,29 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import com.example.apphelper.AppHelper;
 import com.example.apphelper.ToastUtil;
 import com.example.facedemo.R;
+import com.example.facedemo.msc.FaceR;
 import com.iflytek.cloud.FaceDetector;
 import com.iflytek.cloud.SpeechUtility;
 
 import java.util.List;
 
-public class FaceActivity extends AppCompatActivity implements View.OnClickListener {
+public class FaceActivity extends AppCompatActivity implements View.OnClickListener, SurfaceHolder.Callback {
 
-    private TextureView mTrv;
+    private SurfaceView mTrv;
+    private SurfaceView mSfvDrawer;
     private TextureView.SurfaceTextureListener mSurfaceTextureListener;
     private SurfaceTexture mSurface;
     private int mCurCameraId;
@@ -33,7 +44,9 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "FaceActivity";
 
     private int mHeight = 480;
-    private int mWidth  = 640;
+    private int mWidth = 640;
+    private SurfaceHolder surfaceHolder;
+    private SurfaceHolder holder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +69,7 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
     void findView() {
         findViewById(R.id.face_btn_switch).setOnClickListener(this);
         mTrv = findViewById(R.id.face_trv);
-
+        mSfvDrawer = findViewById(R.id.face_sfv_drawer);
 
 
         mSurfaceTextureListener = new TextureView.SurfaceTextureListener() {
@@ -83,29 +96,67 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
 
-        mTrv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                mTrv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        initPreviewViewLayoutParams();
+    }
 
-                initPreviewViewLayoutParams();
-            }
-        });
+    private DisplayMetrics mMetrics;
+
+    DisplayMetrics getScreenMetrics() {
+        if (mMetrics == null) {
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            mMetrics = metrics;
+        }
+        return mMetrics;
+
     }
 
     private void initPreviewViewLayoutParams() {
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        DisplayMetrics metrics = getScreenMetrics();
         int widthPixels = metrics.widthPixels;
+        int heightPixels = metrics.heightPixels;
 
+        //  float max_rate = Math.max(height * 1.0f / heightPixels, width * 1.0f / widthPixels);
+        float rate = mHeight * 1.0f / mWidth;  // -> rate = height / width, width
 
-       //  float max_rate = Math.max(height * 1.0f / heightPixels, width * 1.0f / widthPixels);
-        float rate = mHeight*1.0f / mWidth;  // -> rate = height / width, width
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                (int)(widthPixels),
-                (int)(widthPixels * rate));
+        FrameLayout.LayoutParams params = null;
+        if (isHorizontail()) {
+            if (rate * widthPixels > heightPixels) {
+                params = new FrameLayout.LayoutParams(
+                        (int) (heightPixels * 1.0f / rate),
+                        (int) (heightPixels));
+            } else {
+                params = new FrameLayout.LayoutParams(
+                        (int) (widthPixels),
+                        (int) (widthPixels * rate));
+            }
+        }else{
+            int height = (int) (widthPixels * mWidth / (float) mHeight);
+            params = new FrameLayout.LayoutParams(widthPixels, height);
+        }
+        params.gravity = Gravity.CENTER;
         mTrv.setLayoutParams(params);
-        mTrv.setSurfaceTextureListener(mSurfaceTextureListener);
+        mSfvDrawer.setLayoutParams(params);
+        // mTrv.setSurfaceTextureListener(mSurfaceTextureListener);
+        mTrv.getHolder().addCallback(this);
+        mSfvDrawer.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+                holder.setFormat(PixelFormat.TRANSPARENT);
+                FaceActivity.this.holder = holder;
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+
+            }
+        });
     }
 
 
@@ -118,29 +169,31 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
             int degrees = AppHelper.getCameraDisplayRotation(
                     getApplicationContext(),
                     mCurCameraId);
+            if (isHorizontail()) {
+                degrees += 90;
+            }
             camera.setDisplayOrientation(degrees);
             setDirectionValueByDegree(degrees);
             Camera.Parameters parameters = camera.getParameters();
             parameters.setPictureFormat(PixelFormat.JPEG);
             parameters.setPreviewFormat(ImageFormat.NV21);
 
-            List<Camera.Size> sizes = camera.getParameters().getSupportedPreviewSizes();
-            Camera.Size tmp = null;
-            for (Camera.Size size:sizes){
-                Log.e(TAG, "run: support size: "+size.width+" // "+size.height);
-                if(tmp == null) tmp = size;
-                else if(tmp.height < size.height) tmp = size;
+            // 设置聚焦模式
+            List<String> focusModes = parameters.getSupportedFocusModes();
+            for (String mode : focusModes) {
+                Log.e(TAG, "run:focusModes: " + mode);
             }
-            if(tmp != null){
-                Log.e(TAG, "run: max size: "+tmp.height+" // "+tmp.width);
-                mWidth = tmp.width;
-                mHeight = tmp.height;
+            if (focusModes.contains("continuous-video")) {
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
             }
-            parameters.setPreviewSize(mWidth,mHeight);
+
+            parameters.setPreviewSize(mWidth, mHeight);
             camera.setParameters(parameters);
             camera.startPreview();
             try {
-                camera.setPreviewTexture(mSurface);
+
+                // camera.setPreviewTexture(mSurface);
+                camera.setPreviewDisplay(surfaceHolder);
                 camera.setPreviewCallback(mPreviewCallback);
                 mCamera = camera;
 
@@ -168,13 +221,25 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
                 mDetectorDirection = 3;
                 break;
         }
-        Log.e(TAG, "setDirectionValueByDegree: "+degree+" // "+mDetectorDirection);
+
+        if (mCurCameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            // SDK中使用0,1,2,3,4分别表示0,90,180,270和360度
+            mDetectorDirection = (4 - mDetectorDirection) % 4;
+        }
+        Log.e(TAG, "setDirectionValueByDegree: " + degree + " // " + mDetectorDirection);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
+    }
+
+    private boolean isHorizontail() {
+        DisplayMetrics metrics = getScreenMetrics();
+        int widthPixels = metrics.widthPixels;
+        int heightPixels = metrics.heightPixels;
+        return widthPixels > heightPixels;
     }
 
     private byte[] nv21;
@@ -199,8 +264,6 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
     private boolean mFaceFlag;
 
     // 显示图像的控件宽高
-    private int mPreviewWidth;
-    public int mPreviewHeight;
     private Runnable mFaceDecoder = new Runnable() {
 
         @Override
@@ -209,11 +272,55 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
             while (mFaceFlag) {
                 if (isBufferEmpty) continue;
                 String result = mFaceDetector.trackNV21(nv21, mWidth, mHeight, 1, mDetectorDirection);
+
+                FaceR r = FaceR.decode(result);
+                Log.e(TAG, "runresult: " + result + " // " + (r != null ? r.getCount() : "null"));
+                if (r != null) {
+                    drawFace(r);
+                }
                 isBufferEmpty = true;
                 Log.e(TAG, "run: " + result);
             }
         }
     };
+
+    void drawFace(FaceR r) {
+        if (r.getCount() < 1) {
+            return;
+        }
+
+        Canvas canvas = holder.lockCanvas();
+        if (canvas == null) return;
+
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        List<FaceR.Face> faces = r.getFaces();
+        int size = faces.size();
+        Paint paint = getPaint();
+        FaceR.Face face = null;
+        Path position = null;
+        for (int i = 0; i < size; i++) {
+            face = faces.get(i);
+            position = face.getPosition();
+
+            canvas.drawPath(position, paint);
+        }
+
+        holder.unlockCanvasAndPost(canvas);
+    }
+
+    private Paint mPaint;
+
+    private Paint getPaint() {
+        if (mPaint == null) {
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paint.setColor(Color.GREEN);
+            paint.setStrokeWidth(AppHelper.dp2px(getApplicationContext(), 2));
+            paint.setStyle(Paint.Style.STROKE);
+            mPaint = paint;
+        }
+
+        return mPaint;
+    }
 
     private Runnable mReleaseCurCamera = new Runnable() {
         @Override
@@ -242,8 +349,8 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void run() {
             mReleaseCurCamera.run();
-            mCurCameraId ++;
-            if(mCurCameraId >= numberOfCameras) mCurCameraId = 0;
+            mCurCameraId++;
+            if (mCurCameraId >= numberOfCameras) mCurCameraId = 0;
             mDisplayCamera.run();
         }
     };
@@ -258,6 +365,22 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
 
     private void switchCamera() {
         AppHelper.run(mReleaseCurCameraAnsSwitchCamera);
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        AppHelper.run(mDisplayCamera);
+        AppHelper.run(mFaceDecoder);
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+
     }
 }
 

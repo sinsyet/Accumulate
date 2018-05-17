@@ -6,11 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".activity.FaceActivity">
 
-    <TextureView
-        android:layout_gravity="center"
-        android:id="@+id/face_trv"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+        <SurfaceView
+            android:layout_gravity="center"
+            android:id="@+id/face_trv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <SurfaceView
+            android:layout_gravity="center"
+            android:id="@+id/face_sfv_drawer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+
 
     <Button
         android:id="@+id/face_btn_switch"
