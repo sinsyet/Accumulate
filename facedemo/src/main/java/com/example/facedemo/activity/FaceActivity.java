@@ -289,7 +289,7 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
-        Canvas canvas = holder.lockCanvas();
+        Canvas canvas = surfaceHolder.lockCanvas();
         if (canvas == null) return;
 
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
@@ -305,7 +305,7 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
             canvas.drawPath(position, paint);
         }
 
-        holder.unlockCanvasAndPost(canvas);
+        surfaceHolder.unlockCanvasAndPost(canvas);
     }
 
     private Paint mPaint;
@@ -369,6 +369,7 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        surfaceHolder = holder;
         AppHelper.run(mDisplayCamera);
         AppHelper.run(mFaceDecoder);
     }
