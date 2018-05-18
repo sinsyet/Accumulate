@@ -14,8 +14,7 @@
             android:id="@+id/face_trv"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-        <SurfaceView
-            android:visibility="invisible"
+        <com.example.facedemo.view.FaceDrawerView
             android:layout_gravity="center"
             android:id="@+id/face_sfv_drawer"
             android:layout_width="match_parent"

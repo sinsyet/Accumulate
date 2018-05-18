@@ -28,6 +28,7 @@ import com.example.apphelper.AppHelper;
 import com.example.apphelper.ToastUtil;
 import com.example.facedemo.R;
 import com.example.facedemo.msc.FaceR;
+import com.example.facedemo.view.FaceDrawerView;
 import com.iflytek.cloud.FaceDetector;
 import com.iflytek.cloud.SpeechUtility;
 
@@ -36,7 +37,7 @@ import java.util.List;
 public class FaceActivity extends AppCompatActivity implements View.OnClickListener, SurfaceHolder.Callback {
 
     private SurfaceView mTrv;
-    private SurfaceView mSfvDrawer;
+    private FaceDrawerView mSfvDrawer;
     private TextureView.SurfaceTextureListener mSurfaceTextureListener;
     private SurfaceTexture mSurface;
     private int mCurCameraId;
@@ -135,29 +136,20 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
             int height = (int) (widthPixels * mWidth / (float) mHeight);
             params = new FrameLayout.LayoutParams(widthPixels, height);
         }
+        mPreviewHeight = params.height;
+        mPreviewWidth = params.width;
+        this.mRate = mPreviewWidth * 1.0f / mWidth;
+        Log.e(TAG, "initPreviewViewLayoutParams:height "+params.height+" // width "+params.width+" // "+this.mRate);
         params.gravity = Gravity.CENTER;
         mTrv.setLayoutParams(params);
         mSfvDrawer.setLayoutParams(params);
         // mTrv.setSurfaceTextureListener(mSurfaceTextureListener);
         mTrv.getHolder().addCallback(this);
-        mSfvDrawer.getHolder().addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceCreated(SurfaceHolder holder) {
-                holder.setFormat(PixelFormat.TRANSPARENT);
-                FaceActivity.this.holder = holder;
-            }
 
-            @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
-            }
-
-            @Override
-            public void surfaceDestroyed(SurfaceHolder holder) {
-
-            }
-        });
     }
+
+    private int mPreviewHeight;
+    private int mPreviewWidth;
 
 
     private int numberOfCameras;
@@ -169,9 +161,9 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
             int degrees = AppHelper.getCameraDisplayRotation(
                     getApplicationContext(),
                     mCurCameraId);
-            if (isHorizontail()) {
+            /*if (isHorizontail()) {
                 degrees += 90;
-            }
+            }*/
             camera.setDisplayOrientation(degrees);
             setDirectionValueByDegree(degrees);
             Camera.Parameters parameters = camera.getParameters();
@@ -263,6 +255,7 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
 
     private boolean mFaceFlag;
 
+    private float mRate;
     // 显示图像的控件宽高
     private Runnable mFaceDecoder = new Runnable() {
 
@@ -273,11 +266,12 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
                 if (isBufferEmpty) continue;
                 String result = mFaceDetector.trackNV21(nv21, mWidth, mHeight, 1, mDetectorDirection);
 
-                FaceR r = FaceR.decode(result);
-                Log.e(TAG, "runresult: " + result + " // " + (r != null ? r.getCount() : "null"));
+                FaceR r = FaceR.decode(result,mRate,mPreviewWidth,mPreviewHeight, mCurCameraId == 1 ? Camera.CameraInfo.CAMERA_FACING_FRONT: Camera.CameraInfo.CAMERA_FACING_BACK);
+                /*Log.e(TAG, "runresult: " + result + " // " + (r != null ? r.getCount() : "null"));
                 if (r != null) {
                     drawFace(r);
-                }
+                }*/
+                mSfvDrawer.postRefreshFace(r);
                 isBufferEmpty = true;
                 Log.e(TAG, "run: " + result);
             }
