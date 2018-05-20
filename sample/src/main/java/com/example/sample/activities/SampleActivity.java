@@ -2,6 +2,7 @@ package com.example.sample.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -34,6 +35,11 @@ public class SampleActivity extends AppCompatActivity implements AdapterView.OnI
         mAtys.add(DBActivity.class);
         mAtys.add(FaceActivity.class);
         mAtys.add(WrapperActivity.class);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+        mAtys.add(Camera2Activity.class);
+
+        }
     }
 
     @Override
