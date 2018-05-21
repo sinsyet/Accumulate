@@ -49,6 +49,16 @@ public class FaceR {
         return faces;
     }
 
+    /**
+     * s
+     * @param s MSC解析成出来的json格式的人脸坐标信息
+     * @param rate 显示视频图像的控件与相机分辨率的比例, rate = displayView.height or width /
+     *             camera preview size.height or width
+     * @param width
+     * @param height
+     * @param facing
+     * @return
+     */
     public static FaceR decode(String s, float rate, int width, int height, int facing){
         if(TextUtils.isEmpty(s)) return null;
 

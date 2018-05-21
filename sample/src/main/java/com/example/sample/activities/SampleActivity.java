@@ -40,6 +40,7 @@ public class SampleActivity extends AppCompatActivity implements AdapterView.OnI
         mAtys.add(Camera2Activity.class);
 
         }
+        mAtys.add(SystemCfgActivity.class);
     }
 
     @Override

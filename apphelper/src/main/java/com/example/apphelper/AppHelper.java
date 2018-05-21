@@ -3,13 +3,19 @@ package com.example.apphelper;
 import android.content.Context;
 import android.hardware.Camera;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.IntRange;
 import android.view.Surface;
 import android.view.WindowManager;
 
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -142,4 +148,31 @@ public class AppHelper {
 
         return getFloatFractionValue(section_start,section_end,section_fraction);
     }
+
+
+    public static String getDns(@IntRange(from = 1, to = 2) int index){
+        if(index < 1 || index > 2) return null;
+        Process process = null;
+        InputStream is = null;
+        try {
+            process = Runtime.getRuntime().exec("getprop net.dns" + index);
+            is = process.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            return reader.readLine().trim();
+        } catch (IOException e) {
+        }finally {
+            if (process != null) {
+                process.destroy();
+            }
+
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+        return null;
+    }
+
 }

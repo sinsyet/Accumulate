@@ -42,7 +42,11 @@
 
         <activity android:name=".activities.DBActivity" />
         <activity android:name=".activities.PreviewActivity" />
-        <activity android:name=".activities.Camera2Activity"></activity>
+        <activity android:name=".activities.Camera2Activity" />
+        <activity
+            android:name=".activities.SystemCfgActivity"
+            android:label="@string/title_activity_system_cfg"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
