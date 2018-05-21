@@ -11,4 +11,30 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <LinearLayout
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <Button
+            android:background="@android:color/transparent"
+            android:layout_margin="10dp"
+            android:text="SWITCH"
+            android:textColor="#FFF"
+            android:id="@+id/camera2_btn_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:textColor="#FFF"
+            android:background="@android:color/transparent"
+            android:layout_margin="10dp"
+            android:text="TAKE PIC"
+            android:id="@+id/camera2_btn_takepic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+
 </FrameLayout>
