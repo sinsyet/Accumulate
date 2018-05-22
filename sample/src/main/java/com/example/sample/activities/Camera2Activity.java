@@ -3,6 +3,7 @@ package com.example.sample.activities;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -10,7 +11,11 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.Image;
+import android.media.ImageReader;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -18,20 +23,26 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
+import android.util.Size;
 import android.view.Surface;
-import android.view.SurfaceView;
 import android.view.TextureView;
-import android.view.View;
 
 import com.example.sample.R;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
 
-import static android.hardware.camera2.CameraDevice.*;
+import static android.hardware.camera2.CameraDevice.StateCallback;
+import static android.hardware.camera2.CameraDevice.TEMPLATE_PREVIEW;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class Camera2Activity extends AppCompatActivity implements TextureView.SurfaceTextureListener {
@@ -39,6 +50,9 @@ public class Camera2Activity extends AppCompatActivity implements TextureView.Su
     private TextureView mTrv;
     private SurfaceTexture mSurface;
     private CaptureRequest captureRequest;
+    private String[] cameraIdList;
+    private CameraManager cameraManager;
+    private ImageReader mImageReader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,17 +61,84 @@ public class Camera2Activity extends AppCompatActivity implements TextureView.Su
         findView();
     }
 
+    private void initImageReader(String cameraId) throws CameraAccessException {
+        CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraId);
+        // 获取分辨率
+        StreamConfigurationMap map = cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+        if (map == null) {
+            return;
+        }
+        Size largest = Collections.max(Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)), new Comparator<Size>() {
+            @Override
+            public int compare(Size o1, Size o2) {
+
+                return o1.getHeight() * o1.getWidth() - o2.getHeight() * o2.getWidth();
+            }
+        });
+
+        mImageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight(),
+                ImageFormat.JPEG, /*maxImages*/2);
+
+        mImageReader.setOnImageAvailableListener(
+                mOnImageAvailableListener, getCameraHandler());
+    }
+
+    private ImageReader.OnImageAvailableListener mOnImageAvailableListener = new ImageReader.OnImageAvailableListener() {
+        @Override
+        public void onImageAvailable(ImageReader reader) {
+            getCameraHandler().post(
+                    new ImageSaver(
+                            reader.acquireNextImage(),
+                            new File(getExternalFilesDir(null),
+                                    System.currentTimeMillis()+"_pic.jpg")));
+        }
+    };
+
+
+    private static class ImageSaver implements Runnable{
+
+        private final Image image;
+        private final File f;
+
+        ImageSaver(Image image, File f){
+            this.image = image;
+            this.f = f;
+        }
+        @Override
+        public void run() {
+            ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+            byte[] buf = new byte[buffer.remaining()];
+            buffer.get(buf);
+            OutputStream os = null;
+            try {
+                os = new FileOutputStream(f);
+                os.write(buf);
+                os.flush();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }finally {
+                if (os != null) {
+                    try {
+                        os.close();
+                    } catch (IOException e) {
+                    }
+                }
+            }
+        }
+    }
     private int mCameraIndex;
 
-    void initCamera() {
-        CameraManager cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+    void initCameraManager() {
+        cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         if (cameraManager == null) {
             Log.e(TAG, "initCamera: cameraManager  is null");
             return;
         }
+
         try {
             // 对应的是0和1
-            String[] cameraIdList = cameraManager.getCameraIdList();
+            cameraIdList = cameraManager.getCameraIdList();
             if (cameraIdList.length <= 0) {
                 Log.e(TAG, "initCamera: cameraIdList is empty");
                 return;
@@ -67,36 +148,32 @@ public class Camera2Activity extends AppCompatActivity implements TextureView.Su
             }
 
             mCameraIndex = 0;
-            // 获取相机特性
-            CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraIdList[mCameraIndex]);
-
-            // Key
-            List<CameraCharacteristics.Key<?>> keys = cameraCharacteristics.getKeys();
-            for (int i = 0; i < keys.size(); i++) {
-                CameraCharacteristics.Key<?> key = keys.get(i);
-                String name = key.getName();
-                Log.e(TAG, "initCamera2: " + name);
-            }
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-
-            // 闪光
-            Boolean available = cameraCharacteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
-            mFlashSupported = available == null ? false : available;
-
-            cameraManager.openCamera(cameraIdList[mCameraIndex], mStateCallback, getCameraHandler());
+            initCamera();
         } catch (CameraAccessException e) {
 
         }
+    }
+
+    private void initCamera() throws CameraAccessException {
+
+        // 获取相机特性
+        CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraIdList[mCameraIndex]);
+
+        // 闪光
+        Boolean available = cameraCharacteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+        mFlashSupported = available == null ? false : available;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        initImageReader(cameraIdList[mCameraIndex]);
+        cameraManager.openCamera(cameraIdList[mCameraIndex], mStateCallback, getCameraHandler());
     }
 
     private Boolean mFlashSupported;
@@ -136,7 +213,7 @@ public class Camera2Activity extends AppCompatActivity implements TextureView.Su
              */
 
             list.add(Camera2Activity.this.surface);
-            Log.e(TAG, "onOpened: ");
+            list.add(mImageReader.getSurface());
             try {
                 captureRequestBuilder = camera.createCaptureRequest(TEMPLATE_PREVIEW);
                 captureRequestBuilder.addTarget(Camera2Activity.this.surface);
@@ -198,7 +275,7 @@ public class Camera2Activity extends AppCompatActivity implements TextureView.Su
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
         mSurface = surface;
-        initCamera();
+        initCameraManager();
     }
 
     @Override
@@ -213,6 +290,19 @@ public class Camera2Activity extends AppCompatActivity implements TextureView.Su
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
+
+    /**
+     * 释放相机
+     */
+    private void releaseCamera(){
 
     }
 }
