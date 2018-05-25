@@ -2,4 +2,6 @@
     <string name="app_name">FaceDemo</string>
     <string name="s_switch">SWITCH</string>
     <string name="app_id">56a9e165</string>
+    <string name="switchCamera">SWITCH</string>
+    <string name="back">BACK</string>
 </resources>

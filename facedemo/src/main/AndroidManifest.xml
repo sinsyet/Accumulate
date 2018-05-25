@@ -4,7 +4,8 @@
 
     <application>
         <activity android:name=".activity.FaceActivity" />
-        <activity android:name=".activity.WrapperActivity"></activity>
+        <activity android:name=".activity.WrapperActivity" />
+        <activity android:name=".activity.Face2Activity"></activity>
     </application>
 
 </manifest>

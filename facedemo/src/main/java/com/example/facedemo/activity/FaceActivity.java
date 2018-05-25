@@ -54,9 +54,9 @@ public class FaceActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_face);
         // 注册
-        SpeechUtility.createUtility(this, "appid=" + getString(R.string.app_id));
-        mFaceDetector = FaceDetector.createDetector(getApplicationContext(), null);
+        // SpeechUtility.createUtility(this, "appid=" + getString(R.string.app_id));
         findView();
+        mFaceDetector = FaceDetector.createDetector(getApplicationContext(), null);
         numberOfCameras = Camera.getNumberOfCameras();
     }
 
