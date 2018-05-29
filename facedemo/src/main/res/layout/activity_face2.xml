@@ -12,6 +12,8 @@
         android:layout_height="match_parent" />
 
     <SurfaceView
+        android:visibility="visible"
+        android:background="@android:color/transparent"
         android:id="@+id/face2_sfv"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -29,12 +31,12 @@
 
 
             <Button
-                android:id="@+id/face2_btn_switchCamera"
+                android:id="@+id/face2_btn_back"
                 style="@style/btn_style"
                 android:text="@string/back" />
 
             <Button
-                android:id="@+id/face2_btn_back"
+                android:id="@+id/face2_btn_switchCamera"
                 style="@style/btn_style"
                 android:text="@string/switchCamera" />
         </LinearLayout>

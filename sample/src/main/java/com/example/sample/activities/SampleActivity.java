@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.example.facedemo.activity.Face2Activity;
 import com.example.facedemo.activity.FaceActivity;
 import com.example.facedemo.activity.WrapperActivity;
 import com.example.sample.LoadActivity;
@@ -34,6 +35,7 @@ public class SampleActivity extends AppCompatActivity implements AdapterView.OnI
         mAtys.add(InitActivity.class);
         mAtys.add(DBActivity.class);
         mAtys.add(FaceActivity.class);
+        mAtys.add(Face2Activity.class);
         mAtys.add(WrapperActivity.class);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){

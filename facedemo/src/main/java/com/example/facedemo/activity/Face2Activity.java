@@ -15,7 +15,6 @@ import android.view.View;
 import com.example.apphelper.AppHelper;
 import com.example.apphelper.ToastUtil;
 import com.example.facedemo.R;
-import com.example.facedemo.msc.FaceR;
 import com.iflytek.cloud.FaceDetector;
 
 import java.util.List;
@@ -28,6 +27,7 @@ public class Face2Activity extends AppCompatActivity implements View.OnClickList
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppHelper.setFullScreen(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_face2);
 
@@ -44,6 +44,10 @@ public class Face2Activity extends AppCompatActivity implements View.OnClickList
 
         mSfv = findViewById(R.id.face2_sfv);
         mTrv = findViewById(R.id.face2_trv);
+
+        mSfv.setZOrderOnTop(true);
+
+        mSfv.getHolder().setFormat(PixelFormat.TRANSLUCENT);
 
         mTrv.setSurfaceTextureListener(this);
 
@@ -86,6 +90,8 @@ public class Face2Activity extends AppCompatActivity implements View.OnClickList
     private static final String TAG = "Face2Activity";
     private int mHeight = 480;
     private int mWidth = 640;
+/*    private int mHeight = 600;
+    private int mWidth = 800;*/
     private Runnable mDisplayCamera = new Runnable() {
         @Override
         public void run() {
@@ -110,7 +116,10 @@ public class Face2Activity extends AppCompatActivity implements View.OnClickList
             if (focusModes.contains("continuous-video")) {
                 parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
             }
-
+            /*Camera.Size size = AppHelper.getMaxCameraSupportSize(parameters);
+            mWidth = size.width;
+            mHeight = size.height;*/
+            Log.e(TAG, "run-ygx : "+mWidth+" // "+mHeight);
             parameters.setPreviewSize(mWidth, mHeight);
             camera.setParameters(parameters);
             camera.startPreview();
@@ -179,6 +188,12 @@ public class Face2Activity extends AppCompatActivity implements View.OnClickList
         if(r != null) r.run();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        AppHelper.run(mReleaseCurCamera);
+    }
+
     private SparseArray<Runnable> mClickRunnable = new SparseArray<>();
 
     private void initClickEvent(){
@@ -186,7 +201,48 @@ public class Face2Activity extends AppCompatActivity implements View.OnClickList
         mClickRunnable.put(R.id.face2_btn_switchCamera, this::switchCamera);
     }
 
-    void switchCamera(){}
+    private Runnable mReleaseCurCameraAnsSwitchCamera = new Runnable() {
+        @Override
+        public void run() {
+            mReleaseCurCamera.run();
+            mCurCameraId++;
+            if (mCurCameraId >= numberOfCameras) mCurCameraId = 0;
+            mDisplayCamera.run();
+            isSwitchCamera = false;
+        }
+    };
+
+
+    private Runnable mReleaseCurCamera = new Runnable() {
+        @Override
+        public void run() {
+            if (mCamera == null) {
+                return;
+            }
+
+            mCamera.setPreviewCallback(null);
+            try {
+                mCamera.stopPreview();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                mCamera.release();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            mCamera = null;
+        }
+    };
+
+    private boolean isSwitchCamera;
+    void switchCamera(){
+        if(isSwitchCamera) return;
+
+        isSwitchCamera = true;
+        AppHelper.run(mReleaseCurCameraAnsSwitchCamera);
+    }
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {

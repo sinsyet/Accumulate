@@ -1,5 +1,6 @@
 package com.example.apphelper;
 
+import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
 import android.net.ConnectivityManager;
@@ -8,7 +9,11 @@ import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.IntRange;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Surface;
+import android.view.Window;
 import android.view.WindowManager;
 
 
@@ -16,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -175,4 +181,42 @@ public class AppHelper {
         return null;
     }
 
+    public static Camera.Size getMaxCameraSupportSize(Camera.Parameters parameters){
+        if(parameters == null) return null;
+
+        List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+        Camera.Size size = null;
+        for (Camera.Size s : sizes){
+            Log.e(TAG, "getMaxCameraSupportSize: "+s.height+" // "+s.width);
+            if(size == null){
+                size = s;
+                continue;
+            }
+
+            if(size.height < s.height){
+                size = s;
+            }
+        }
+        return size;
+    }
+
+    public static void setFullScreen(AppCompatActivity aty){
+        if(aty == null) return;
+
+
+
+        /*set it to be no title*/
+        aty.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        /*set it to be full screen*/
+        aty.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        ActionBar actionBar = aty.getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+
+    }
+
+    private static final String TAG = "AppHelper";
 }
