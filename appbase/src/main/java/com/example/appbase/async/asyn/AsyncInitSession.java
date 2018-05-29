@@ -95,10 +95,25 @@ public class AsyncInitSession implements IEventSession<AsyncInitQueue, AsyncInit
     private void startAsyncInitQueue(AsyncInitQueue queue, int index)
     {
         mRunningIniter.clear();
+        int cursor = 0;
         while (queue.find()){
 
             AbsAsyncIniter next = queue.next();
-            // next.registerSessionId();
+
+            next.registerSessionCallback(mCb, cursor++);
+            mRunningIniter.add(next);
+            mMainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onIniterStart(next);
+                    mEnginePool.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            next.onHandleInit();
+                        }
+                    });
+                }
+            });
         }
     }
 
@@ -115,5 +130,70 @@ public class AsyncInitSession implements IEventSession<AsyncInitQueue, AsyncInit
     public int getStatus() {
 
         return mStatus;
+    }
+
+    private boolean mRunningFlag;
+    private Callback mCb = new Callback() {
+        @Override
+        public void onEnd(AbsAsyncIniter cur) {
+            mMainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onIniterEnd(cur);
+                    mRunningIniter.remove(cur.getRegisterId());
+
+                    if(mRunningIniter.size() == 0){
+                        onNextIniterQueue();
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void onFail(AbsAsyncIniter cur, Object extra) {
+            mMainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mRunningFlag = mCallback.onIniterFail(cur, extra);
+                }
+            });
+        }
+
+        @Override
+        public void onException(AbsAsyncIniter cur, Throwable t) {
+            mMainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mRunningFlag = mCallback.onIniterException(cur, t);
+                }
+            });
+        }
+    };
+
+    private void onNextIniterQueue(){
+        mQueueIndex ++;
+        if(mQueueIndex >= mQueues.size()){
+            if(mRunningFlag){
+                mCallback.onEndSession(this,true);
+            }else{
+                mCallback.onEndSession(this,false);
+            }
+        }else{
+            if(mRunningFlag){
+                AsyncInitQueue queue = getQueues().get(mQueueIndex);
+                startAsyncInitQueue(queue,mQueueIndex);
+            }else{
+                mCallback.onEndSession(this,false);
+            }
+        }
+    }
+
+    interface Callback{
+
+        void onEnd(AbsAsyncIniter cur);
+
+        void onFail(AbsAsyncIniter cur, Object extra);
+
+        void onException(AbsAsyncIniter cur, Throwable t);
     }
 }
