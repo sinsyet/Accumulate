@@ -1,16 +1,14 @@
 package com.example.appbase.async.asyn;
 
 
-import com.example.appbase.async.AbsIniter;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 public class AsyncInitQueue {
 
-    private LinkedList<AbsIniter> mQueue;
-    public AsyncInitQueue(AbsIniter ... initers){
+    private LinkedList<AbsAsyncIniter> mQueue;
+    public AsyncInitQueue(AbsAsyncIniter... initers){
         if(mQueue == null){
             mQueue = new LinkedList<>();
         }
@@ -18,7 +16,7 @@ public class AsyncInitQueue {
         mQueue.addAll(Arrays.asList(initers));
     }
 
-    public AsyncInitQueue(List<AbsIniter> initers){
+    public AsyncInitQueue(List<AbsAsyncIniter> initers){
         if(initers == null) return;
 
 
@@ -29,7 +27,7 @@ public class AsyncInitQueue {
         mQueue.addAll(initers);
     }
 
-    public AsyncInitQueue add(AbsIniter initer){
+    public AsyncInitQueue add(AbsAsyncIniter initer){
 
         mQueue.addFirst(initer);
 
@@ -44,7 +42,7 @@ public class AsyncInitQueue {
         return true;
     }
 
-    AbsIniter next(){
-        return mQueue.removeLast();
+    AbsAsyncIniter next(){
+        return mQueue.getLast();
     }
 }

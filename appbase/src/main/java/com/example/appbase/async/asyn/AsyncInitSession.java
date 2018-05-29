@@ -94,8 +94,15 @@ public class AsyncInitSession implements IEventSession<AsyncInitQueue, AsyncInit
 
     private void startAsyncInitQueue(AsyncInitQueue queue, int index)
     {
+        mRunningIniter.clear();
+        while (queue.find()){
 
+            AbsAsyncIniter next = queue.next();
+            // next.registerSessionId();
+        }
     }
+
+    private List<AbsAsyncIniter> mRunningIniter = new ArrayList<>();
 
     private List<AsyncInitQueue> getQueues() {
         return mQueues == null ? mQueues = new ArrayList<>() : mQueues;
