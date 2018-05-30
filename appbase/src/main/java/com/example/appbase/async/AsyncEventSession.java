@@ -37,18 +37,29 @@ public class AsyncEventSession<EventQueue extends AsyncEventQueue<AsyncHandler>,
 
     private int mStatus = Status.INVALID;
 
+    private int mSessionEventEndCount;
+    private int mSessionEventFailCount;
+    private int mSessionEventExceptionCount;
+
+    private boolean isCachePool;
+
     public AsyncEventSession() {
-        this(new Handler(Looper.myLooper() == null ? Looper.getMainLooper() : Looper.myLooper()),
-                Executors.newCachedThreadPool());
+        this(new Handler(Looper.myLooper() == null ? Looper.getMainLooper() : Looper.myLooper()),null);
     }
 
     public AsyncEventSession(Handler handler) {
-        this(handler, Executors.newCachedThreadPool());
+        this(handler,null);
     }
 
     public AsyncEventSession(Handler handler, ExecutorService pool) {
         mHandler = handler;
-        mEnginePool = pool;
+        if (pool == null) {
+            mEnginePool = Executors.newCachedThreadPool();
+            isCachePool = true;
+        }else {
+            isCachePool = false;
+            mEnginePool = pool;
+        }
         mQueueIndex = 0;
     }
 
@@ -98,6 +109,9 @@ public class AsyncEventSession<EventQueue extends AsyncEventQueue<AsyncHandler>,
 
 
         mCallback = asynInitCallback;
+        mSessionEventEndCount = 0;
+        mSessionEventFailCount = 0;
+        mSessionEventExceptionCount = 0;
 
         mHandler.post(new Runnable() {
             @Override
@@ -106,6 +120,7 @@ public class AsyncEventSession<EventQueue extends AsyncEventQueue<AsyncHandler>,
                 mCallback.onStartSession(AsyncEventSession.this);
                 // EventQueue queue = getQueues().get(mQueueIndex);
                 EventQueue queue = mFirstQueue;
+                mCurQueue =  queue;
                 startAsyncInitQueue(queue);
             }
         });
@@ -139,12 +154,43 @@ public class AsyncEventSession<EventQueue extends AsyncEventQueue<AsyncHandler>,
         mRunningFlag = false;
     }
 
+    public int getAsyncEventCount(){
+        EventQueue queue = mFirstQueue;
+        if(queue == null) return 0;
+
+        int count = 0;
+
+        do{
+            count += queue.size();
+
+        }while ((queue = (EventQueue) queue.nextQueue()) != null);
+        return count;
+    }
+
+    public int getHandledCount(){
+
+        return mSessionEventEndCount + mRunningEventEndCount;
+    }
+
+    public int getHandledFailCount(){
+
+        return mSessionEventFailCount + mRunningEventFailCount;
+    }
+
+    public int getHandledExceptionCount(){
+
+        return mSessionEventExceptionCount + mRunningEventExceptionCount;
+    }
+
     private EventQueue mCurQueue;
     private void startAsyncInitQueue(EventQueue queue) {
         mRunningFlag = true;
         mRunningIniter.clear();
-        mCurQueue =  queue;
-        mCallback.onEventQueueStart(this, mCurQueue);
+
+        mCallback.onEventQueueStart(this, queue);
+        mRunningEventEndCount = 0;
+        mRunningEventFailCount = 0;
+        mRunningEventExceptionCount = 0;
         while (queue.find()) {
 
             final AsyncHandler next = queue.next();
@@ -173,7 +219,10 @@ public class AsyncEventSession<EventQueue extends AsyncEventQueue<AsyncHandler>,
     }
 
     private void release() {
-        mEnginePool.shutdown();
+        if (isCachePool) {
+            mEnginePool.shutdown();
+            mEnginePool = null;
+        }
     }
 
     public int getStatus() {
@@ -186,6 +235,9 @@ public class AsyncEventSession<EventQueue extends AsyncEventQueue<AsyncHandler>,
     }
 
     private boolean mRunningFlag;
+    private int mRunningEventEndCount;
+    private int mRunningEventFailCount;
+    private int mRunningEventExceptionCount;
     private Callback<AsyncHandler> mCb = new Callback<AsyncHandler>() {
 
         @Override
@@ -195,7 +247,7 @@ public class AsyncEventSession<EventQueue extends AsyncEventQueue<AsyncHandler>,
                 public void run() {
                     mCallback.onEventEnd(AsyncEventSession.this, cur);
                     mRunningIniter.remove(cur);
-
+                    mRunningEventEndCount ++;
                     if (mRunningIniter.size() == 0) {
                         onNextIniterQueue();
                     }
@@ -208,7 +260,7 @@ public class AsyncEventSession<EventQueue extends AsyncEventQueue<AsyncHandler>,
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-
+                    mRunningEventFailCount++;
                     if (getStatus() != Status.INTERRUPT) {
                         mRunningFlag = mCallback.onEventFail(AsyncEventSession.this, cur, extra);
                     }
@@ -226,6 +278,7 @@ public class AsyncEventSession<EventQueue extends AsyncEventQueue<AsyncHandler>,
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
+                    mRunningEventExceptionCount++;
                     if (getStatus() != Status.INTERRUPT) {
                         mRunningFlag = mCallback.onEventException(AsyncEventSession.this, cur, t);
                     }
@@ -242,6 +295,10 @@ public class AsyncEventSession<EventQueue extends AsyncEventQueue<AsyncHandler>,
 
         mCallback.onEventQueueEnd(this,mCurQueue);
 
+        mSessionEventEndCount += mRunningEventEndCount;
+        mSessionEventFailCount += mRunningEventFailCount;
+        mSessionEventExceptionCount += mRunningEventExceptionCount;
+
         if (getStatus() == Status.INTERRUPT) {
             mCallback.onEndSession(this, false);
             release();
@@ -250,6 +307,8 @@ public class AsyncEventSession<EventQueue extends AsyncEventQueue<AsyncHandler>,
 
         // mQueueIndex++;
         // if (mQueueIndex >= mQueues.size()) {
+
+        @SuppressWarnings("unchecked")
         EventQueue q = null;
         if ((q = (EventQueue) mCurQueue.nextQueue()) == null) {
             if (mRunningFlag) {
@@ -261,8 +320,8 @@ public class AsyncEventSession<EventQueue extends AsyncEventQueue<AsyncHandler>,
             }
             release();
         } else {
+            mCurQueue =  q;
             if (mRunningFlag) {
-                // EventQueue queue = getQueues().get(mQueueIndex);
                 startAsyncInitQueue(q);
             } else {
                 mStatus = Status.FAIL;

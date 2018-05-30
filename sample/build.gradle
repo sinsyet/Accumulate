@@ -42,4 +42,6 @@ dependencies {
     implementation project(':AndroidHttpServer')
     implementation project(':DBLib')
     implementation project(':facedemo')
+
+    implementation 'com.github.vondear:RxTools:v1.7.6.2'//请替换成上方 JitPack 最新的版本号
 }

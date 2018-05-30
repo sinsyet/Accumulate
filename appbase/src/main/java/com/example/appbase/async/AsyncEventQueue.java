@@ -8,6 +8,7 @@ import java.util.List;
 public class AsyncEventQueue<AsyncHandler extends AbsAsyncEvent> {
 
     private LinkedList<AsyncHandler> mQueue;
+    private int index;
     public AsyncEventQueue(AsyncHandler... initers){
         if(mQueue == null){
             mQueue = new LinkedList<>();
@@ -29,7 +30,7 @@ public class AsyncEventQueue<AsyncHandler extends AbsAsyncEvent> {
 
     public AsyncEventQueue add(AsyncHandler initer){
 
-        mQueue.addFirst(initer);
+        mQueue.add(initer);
 
         return this;
     }
@@ -39,11 +40,12 @@ public class AsyncEventQueue<AsyncHandler extends AbsAsyncEvent> {
     }
 
     boolean find(){
-        return mQueue.size() > 0;
+        int size = mQueue.size();
+        return size > 0 && index < size;
     }
 
     AsyncHandler next(){
-        return mQueue.removeLast();
+        return mQueue.get(index ++);
     }
 
     private AsyncEventQueue<AsyncHandler> mNext;
