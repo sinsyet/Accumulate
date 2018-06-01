@@ -12,6 +12,7 @@
       <module fileurl="file://$PROJECT_DIR$/facedemo/facedemo.iml" filepath="$PROJECT_DIR$/facedemo/facedemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/ndklib/ndklib.iml" filepath="$PROJECT_DIR$/ndklib/ndklib.iml" />
       <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/samplemodule/samplemodule.iml" filepath="$PROJECT_DIR$/samplemodule/samplemodule.iml" />
       <module fileurl="file://$PROJECT_DIR$/viewlib/viewlib.iml" filepath="$PROJECT_DIR$/viewlib/viewlib.iml" />
       <module fileurl="file://$PROJECT_DIR$/zzw/zzw.iml" filepath="$PROJECT_DIR$/zzw/zzw.iml" />
     </modules>

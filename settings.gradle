@@ -1,2 +1,3 @@
 include ':app', ':sample', ':zzw', ':DBLib', ':facedemo', ':JavaSample'
 include ':viewlib', ':apphelper', ':ndklib', ':appbase', ':AndroidHttpServer'
+include ':samplemodule'
