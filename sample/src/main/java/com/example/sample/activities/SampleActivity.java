@@ -14,6 +14,7 @@ import com.example.facedemo.activity.FaceActivity;
 import com.example.facedemo.activity.WrapperActivity;
 import com.example.sample.LoadActivity;
 import com.example.sample.R;
+import com.example.sample.RippleActivity;
 import com.example.sample.adapters.SampleAtyAdapter;
 
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class SampleActivity extends AppCompatActivity implements AdapterView.OnI
         mAtys.add(AsyncActivity.class);
         mAtys.add(PileLayoutActivity.class);
         mAtys.add(ZZWInitActivity.class);
+        mAtys.add(RippleActivity.class);
     }
 
     @Override

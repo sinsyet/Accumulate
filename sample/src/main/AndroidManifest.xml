@@ -49,9 +49,11 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.AsyncActivity" />
         <activity android:name=".activities.PileLayoutActivity" />
-        <activity android:name=".activities.ZZWInitActivity"
+        <activity
+            android:name=".activities.ZZWInitActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".RippleActivity"></activity>
     </application>
 
 </manifest>

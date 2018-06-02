@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RippleActivity">
+
+    <com.skyfishjy.library.RippleBackground
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/content"
+        app:rb_color="#0099CC"
+        app:rb_radius="24dp"
+        app:rb_rippleAmount="4"
+        app:rb_type="strokeRipple"
+        app:rb_duration="3000"
+        app:rb_scale="6">
+        <!--
+        rb_color, 阴影的颜色
+        rb_radius, 雷达半径; ps, 雷达波是从一个圆形雷达辐射出去的;, 这里的这个雷达被ImageView盖住了;
+        rb_rippleAmount,波段个数
+        rb_type, 类型, 是实心还是只是边框
+        rb_duration, 扩散一个波纹的时间
+        rb_scale, 伸缩倍数: 这里是放大到原大小的6倍
+        -->
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_centerInParent="true"
+            android:id="@+id/centerImage"
+            android:src="@drawable/ic_checknet"/>
+    </com.skyfishjy.library.RippleBackground>
+
+</android.support.constraint.ConstraintLayout>
