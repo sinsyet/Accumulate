@@ -114,6 +114,10 @@ public class AppHelper {
         return (alpha << 24) | (red << 16) | (green << 8) | blue;
     }
 
+    public static int randomInt(int bound){
+        return sR.nextInt(bound);
+    }
+
     public static long charArr2CardId(char[] cArr) {
         long result = 0;
         int cursor = 0;

@@ -1,18 +1,17 @@
 package com.example.appbase.async;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 public class AsyncEventQueue<AsyncHandler extends AbsAsyncEvent> {
 
-    private LinkedList<AsyncHandler> mQueue;
+    private List<AsyncHandler> mQueue = new ArrayList<>();
     private int index;
     public AsyncEventQueue(AsyncHandler... initers){
-        if(mQueue == null){
-            mQueue = new LinkedList<>();
-        }
+
 
         mQueue.addAll(Arrays.asList(initers));
     }
@@ -21,9 +20,6 @@ public class AsyncEventQueue<AsyncHandler extends AbsAsyncEvent> {
         if(initers == null) return;
 
 
-        if(mQueue == null){
-            mQueue = new LinkedList<>();
-        }
 
         mQueue.addAll(initers);
     }
@@ -64,5 +60,9 @@ public class AsyncEventQueue<AsyncHandler extends AbsAsyncEvent> {
     AsyncEventQueue<AsyncHandler> nextQueue(){
 
         return mNext;
+    }
+
+    public List<AsyncHandler> getAsyncHandler(){
+        return mQueue;
     }
 }
