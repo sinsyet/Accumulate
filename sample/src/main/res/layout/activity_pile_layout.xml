@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:pile="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.PileLayoutActivity">
+
+
+    <com.stone.pile.libs.PileLayout
+        android:layout_gravity="center"
+        android:id="@+id/main_pileLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        pile:displayCount="1.8"
+        pile:interval="10dp"
+        pile:scaleStep="0.32"
+        pile:sizeRatio="1.12" />
+
+</FrameLayout>

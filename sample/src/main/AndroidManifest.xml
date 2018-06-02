@@ -47,7 +47,8 @@
             android:name=".activities.SystemCfgActivity"
             android:label="@string/title_activity_system_cfg"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.AsyncActivity"></activity>
+        <activity android:name=".activities.AsyncActivity" />
+        <activity android:name=".activities.PileLayoutActivity"></activity>
     </application>
 
 </manifest>

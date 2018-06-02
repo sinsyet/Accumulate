@@ -44,6 +44,7 @@ public class SampleActivity extends AppCompatActivity implements AdapterView.OnI
         }
         mAtys.add(SystemCfgActivity.class);
         mAtys.add(AsyncActivity.class);
+        mAtys.add(PileLayoutActivity.class);
     }
 
     @Override
