@@ -1,0 +1,244 @@
+
+layout_1包裹layout_2,layout_2包裹TextView1
+
+ACTION_DOWN: 0, ACTION_MOVE: 2, ACTION_UP: 1
+
+#### 默认都返回false
+
+layout_1: dispatchTouchEvent: 0
+layout_1: onInterceptTouchEvent: 0
+layout_2: dispatchTouchEvent: 0
+layout_2: onInterceptTouchEvent: 0
+TextView1: dispatchTouchEvent: 0
+TextView1: onTouchEvent: 0
+layout_2: onTouchEvent: 0
+layout_1: onTouchEvent: 0
+
+ACTION_DOWN: 0
+
+#### layout_1 dispatchTouchEvent 返回true
+
+layout_1: dispatchTouchEvent: 0
+layout_1: dispatchTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+layout_1: dispatchTouchEvent: 1
+
+事件只传递到Layout_1的dispatchTouchEvent方法
+
+#### layout_1 onInterruptTouchEvent方法
+
+layout_1: dispatchTouchEvent: 0
+		  onInterceptTouchEvent: 0
+          onTouchEvent: 0
+		  
+onTouch事件传递给Layout_1的onTouchEvent方法, 如果onTouchEvent方法返回false, 则后面的move 和 up事件不会再传过来了
+
+#### layout_1 onInterceptTouchEvent方法 return true, onTouchEvent也return true
+
+layout_1: dispatchTouchEvent: 0
+		  onInterceptTouchEvent: 0
+layout_1: onTouchEvent: 0
+		  dispatchTouchEvent: 2
+          onTouchEvent: 2
+		  dispatchTouchEvent: 2
+          onTouchEvent: 2
+		  dispatchTouchEvent: 2
+		  onTouchEvent: 2
+		  dispatchTouchEvent: 2
+		  onTouchEvent: 2
+layout_1: dispatchTouchEvent: 1
+          onTouchEvent: 1
+		  
+onTouchEvent方法return true, 所以后续的MOVE和UP事件会传递给Layout_1, 
+再传递后续事件的时候, onInterruptTouchEvent方法不再执行, 只执行(先)dispatchTouchEvent, 再执行onTouchEvent
+
+#### TextView1的dispatchTouchEvent return true;
+
+layout_1: dispatchTouchEvent: 0
+          onInterceptTouchEvent: 0
+layout_2: dispatchTouchEvent: 0
+          onInterceptTouchEvent: 0
+TextView1: dispatchTouchEvent: 0
+layout_1: dispatchTouchEvent: 2
+          onInterceptTouchEvent: 2
+layout_2: dispatchTouchEvent: 2
+         onInterceptTouchEvent: 2
+TextView1: dispatchTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+          onInterceptTouchEvent: 2
+layout_2: dispatchTouchEvent: 2
+          onInterceptTouchEvent: 2
+TextView1: dispatchTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+          onInterceptTouchEvent: 2
+    
+layout_2: dispatchTouchEvent: 2
+          onInterceptTouchEvent: 2
+TextView1: dispatchTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+          onInterceptTouchEvent: 2
+layout_2: dispatchTouchEvent: 2
+          onInterceptTouchEvent: 2
+TextView1: dispatchTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+          onInterceptTouchEvent: 2
+layout_2: dispatchTouchEvent: 2
+          onInterceptTouchEvent: 2
+TextView1: dispatchTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+          onInterceptTouchEvent: 2
+layout_2: dispatchTouchEvent: 2
+          onInterceptTouchEvent: 2
+TextView1: dispatchTouchEvent: 2
+layout_1: dispatchTouchEvent: 1
+          onInterceptTouchEvent: 1
+layout_2: dispatchTouchEvent: 1
+          onInterceptTouchEvent: 1
+TextView1: dispatchTouchEvent: 1
+
+事件从layout_1 -> layout_2 -> TextView1, 走到TextView的dispatchTouchEvent事件结束
+
+同时, 外部的layout都是可以拦截的; 
+
+#### TextView1的onTouchEvent方法 return true;
+
+layout_1: dispatchTouchEvent: 0
+		  onInterceptTouchEvent: 0
+layout_2: dispatchTouchEvent: 0
+          onInterceptTouchEvent: 0
+TextView1: dispatchTouchEvent: 0
+          onTouchEvent: 0
+layout_1: dispatchTouchEvent: 2
+		  onInterceptTouchEvent: 2
+layout_2: dispatchTouchEvent: 2
+		  onInterceptTouchEvent: 2
+TextView1: dispatchTouchEvent: 2
+		  onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+		  onInterceptTouchEvent: 2
+layout_2: dispatchTouchEvent: 2
+		  onInterceptTouchEvent: 2
+TextView1: dispatchTouchEvent: 2
+		  onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+		  onInterceptTouchEvent: 2
+layout_2: dispatchTouchEvent: 2
+		  onInterceptTouchEvent: 2
+TextView1: dispatchTouchEvent: 2
+		  onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+		  onInterceptTouchEvent: 2
+layout_2: dispatchTouchEvent: 2
+		  onInterceptTouchEvent: 2
+TextView1: dispatchTouchEvent: 2
+		  onTouchEvent: 2
+layout_1: dispatchTouchEvent: 1
+		  onInterceptTouchEvent: 1
+layout_2: dispatchTouchEvent: 1
+		  onInterceptTouchEvent: 1
+TextView1: dispatchTouchEvent: 1
+          onTouchEvent: 1
+		  
+		  // 事件传递到TextView1的onTouchEvent方法为止
+		  
+#### Layout_1的onTouchEvent方法 return true
+
+layout_1: dispatchTouchEvent: 0
+    onInterceptTouchEvent: 0
+layout_2: dispatchTouchEvent: 0
+          onInterceptTouchEvent: 0
+TextView1: dispatchTouchEvent: 0
+           onTouchEvent: 0
+layout_2: onTouchEvent: 0
+layout_1: onTouchEvent: 0
+layout_1: dispatchTouchEvent: 2
+          onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+          onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+		  onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+          onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+          onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+          onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+          onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+layout_1: onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+          onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+          onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+          onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+          onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+          onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+          onTouchEvent: 2
+layout_1: dispatchTouchEvent: 1
+          onTouchEvent: 1
+		  
+		  // TouchEvent事件被Layout_1消费掉了
+		  // 后续的MOVE和UP事件直接传递给Layout_1的dispatchTouchEvent和onTouchEvent, 
+		  
+#### Layout_2的onTouchEvent方法 return true
+
+layout_1: dispatchTouchEvent: 0
+		  onInterceptTouchEvent: 0
+ layout_2: dispatchTouchEvent: 0
+		  onInterceptTouchEvent: 0
+TextView1: dispatchTouchEvent: 0
+		   onTouchEvent: 0
+layout_2: onTouchEvent: 0
+layout_1: dispatchTouchEvent: 2
+          onInterceptTouchEvent: 2
+layout_2: dispatchTouchEvent: 2
+		  onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+		  onInterceptTouchEvent: 2
+layout_2: dispatchTouchEvent: 2
+          onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+		  onInterceptTouchEvent: 2
+layout_2: dispatchTouchEvent: 2
+		  onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+		  onInterceptTouchEvent: 2
+layout_2: dispatchTouchEvent: 2
+		  onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+		  onInterceptTouchEvent: 2
+layout_2: dispatchTouchEvent: 2
+		  onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+		  onInterceptTouchEvent: 2
+layout_2: dispatchTouchEvent: 2
+		  onTouchEvent: 2
+layout_1: dispatchTouchEvent: 2
+		  onInterceptTouchEvent: 2
+layout_2: dispatchTouchEvent: 2
+	      onTouchEvent: 2
+layout_1: dispatchTouchEvent: 1
+		  onInterceptTouchEvent: 1
+layout_2: dispatchTouchEvent: 1
+layout_2: onTouchEvent: 1
+
+得出结论: 上层Layout会先dispatch, 再尝试Interrupt;
+本Layout只dispatch,然后onTouchEvent
+
+
+
+
+
+
+
