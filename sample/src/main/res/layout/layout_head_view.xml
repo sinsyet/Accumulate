@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:siShape="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#aa000000"
+    xmlns:tool="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_margin="10dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        <TextView
+            android:padding="2dp"
+            android:background="#000000"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="Tell Your World"
+            android:textColor="#FFFFFF"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:padding="2dp"
+            android:background="#000000"
+            android:textSize="12dp"
+            android:text="人气: 10.44万 9.2分"
+            android:textColor="#FFFFFF"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <TextView
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:textSize="14dp"
+            android:text="2014.09.10发行"
+            android:textColor="#FFFFFF"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.github.siyamed.shapeimageview.mask.PorterShapeImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:siShape="@drawable/shape_rounded_rectangle"
+                android:src="@drawable/img_flower"
+                app:siSquare="true"/>
+
+            <RelativeLayout
+                android:layout_marginLeft="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:drawablePadding="6dp"
+                    android:textColor="#FFFFFF"
+                    android:text="livetune"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <LinearLayout
+                    android:layout_marginBottom="10dp"
+                    android:layout_alignParentBottom="true"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <FrameLayout
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:textColor="#FFFFFF"
+                            android:drawablePadding="6dp"
+                            android:text="559"
+                            android:drawableLeft="@mipmap/ic_heart"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </FrameLayout>
+                    <FrameLayout
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:textColor="#FFFFFF"
+                            android:text="999+"
+                            android:layout_gravity="center"
+                            android:drawablePadding="6dp"
+                            android:drawableLeft="@mipmap/ic_comment"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </FrameLayout>
+                    <FrameLayout
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:textColor="#FFFFFF"
+                            android:text=" "
+                            android:layout_gravity="right"
+                            android:drawableLeft="@mipmap/ic_share"
+                            android:drawablePadding="6dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </FrameLayout>
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

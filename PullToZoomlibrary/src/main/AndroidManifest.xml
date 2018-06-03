@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ecloud.pulltozoomview">
+
+    <application
+        android:allowBackup="true"
+        >
+        <activity android:name=".sample.PullToZoomActivity"></activity>
+        <activity
+            android:name=".sample.PullToZoomListActivity"
+            android:label="@string/title_pull_to_zoom_list_view" />
+
+        <activity
+            android:name=".sample.PullToZoomScrollActivity"
+            android:theme="@style/ImageTranslucentTheme"
+            android:label="@string/title_pull_to_zoom_scroll_view" />
+        <activity
+            android:name=".sample.recyclerview.PullToZoomRecyclerActivity"
+            android:label="@string/title_pull_to_zoom_scroll_view" />
+    </application>
+
+</manifest>

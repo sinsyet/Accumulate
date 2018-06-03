@@ -21,11 +21,12 @@ public class App {
         }*/
      /* byte b = -1;
         System.out.println(b & 0xFF);*/
-        byte[] arr = {0x20, 0x52, 0x52, 0x00, 0x00, 0x03};
+       /* byte[] arr = {0x20, 0x52, 0x52, 0x00, 0x00, 0x03};
         // 20 52 52 00 ff 03
         calcCommandsBBC(arr);
-        toHex(arr);
+        toHex(arr);*/
 
+        System.out.println(0.65D * 1.0f);
     }
 
     private static void toHex(byte[] arr){

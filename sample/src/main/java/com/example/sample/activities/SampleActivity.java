@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.ecloud.pulltozoomview.sample.PullToZoomActivity;
 import com.example.facedemo.activity.Face2Activity;
 import com.example.facedemo.activity.FaceActivity;
 import com.example.facedemo.activity.WrapperActivity;
@@ -48,6 +49,8 @@ public class SampleActivity extends AppCompatActivity implements AdapterView.OnI
         mAtys.add(PileLayoutActivity.class);
         mAtys.add(ZZWInitActivity.class);
         mAtys.add(RippleActivity.class);
+        mAtys.add(PullToZoomActivity.class);
+        mAtys.add(PTZSampleActivity.class);
     }
 
     @Override
