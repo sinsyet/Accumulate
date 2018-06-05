@@ -26,7 +26,9 @@ public class App {
         calcCommandsBBC(arr);
         toHex(arr);*/
 
-        System.out.println(0.65D * 1.0f);
+        /*System.out.println(0.65D * 1.0f);*/
+        System.out.println(100%3.0);
+        System.out.println(Math.round(12.5));
     }
 
     private static void toHex(byte[] arr){

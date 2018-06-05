@@ -7,10 +7,13 @@
       <module fileurl="file://$PROJECT_DIR$/DBLib/DBLib.iml" filepath="$PROJECT_DIR$/DBLib/DBLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/JavaSample/JavaSample.iml" filepath="$PROJECT_DIR$/JavaSample/JavaSample.iml" />
       <module fileurl="file://$PROJECT_DIR$/PullToZoomlibrary/PullToZoomlibrary.iml" filepath="$PROJECT_DIR$/PullToZoomlibrary/PullToZoomlibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PullToZoomlibrary/PullToZoomlibrary.iml" filepath="$PROJECT_DIR$/PullToZoomlibrary/PullToZoomlibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/appbase/appbase.iml" filepath="$PROJECT_DIR$/appbase/appbase.iml" />
       <module fileurl="file://$PROJECT_DIR$/apphelper/apphelper.iml" filepath="$PROJECT_DIR$/apphelper/apphelper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/demo/demo.iml" filepath="$PROJECT_DIR$/demo/demo.iml" />
       <module fileurl="file://$PROJECT_DIR$/facedemo/facedemo.iml" filepath="$PROJECT_DIR$/facedemo/facedemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
       <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
       <module fileurl="file://$PROJECT_DIR$/ndklib/ndklib.iml" filepath="$PROJECT_DIR$/ndklib/ndklib.iml" />
       <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" />
