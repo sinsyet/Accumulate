@@ -13,7 +13,7 @@ import com.example.sample.R;
  *
  * @author YGX
  */
-public class FilePathHolder extends ViewHoder<FilePath> {
+public class FilePathHolder extends ViewHolder<FilePath> {
     private ImageView mIvIcon;
     private TextView mTvName;
 

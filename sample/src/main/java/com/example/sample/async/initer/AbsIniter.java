@@ -1,12 +1,15 @@
 package com.example.sample.async.initer;
 
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.example.appbase.async.AbsAsyncEvent;
 
 public abstract class AbsIniter extends AbsAsyncEvent {
     private static final String TAG = "AbsIniter";
+    private Handler mMainHandler = new Handler(Looper.getMainLooper());
 
     /**
      * 无progress
@@ -94,12 +97,23 @@ public abstract class AbsIniter extends AbsAsyncEvent {
             return;
         }
 
-        if (mListener != null) {
-            mListener.onProgress(total,progress, progress / total);
-        }
+        mMainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mListener != null) {
+                    mListener.onProgress(total,progress, curFrequency = ((progress > total ? total : progress) * 100f / total));
+                }
+            }
+        });
+
     }
 
-    interface OnInitProgressListener {
+    private float curFrequency = 0.0f;
+    public float getCurFrequency() {
+        return curFrequency;
+    }
+
+    public interface OnInitProgressListener {
 
         void onProgress(float total, float progress, float frequency);
     }

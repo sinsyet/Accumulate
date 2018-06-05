@@ -11,32 +11,40 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ListView;
 
 import com.example.sample.R;
+import com.example.sample.async.adapters.InitAdapter;
+import com.example.sample.async.initer.AbsIniter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class InitDialog extends Dialog implements View.OnClickListener {
 
-    private RecyclerView recyv;
+    private List<AbsIniter> items;
+    private ListView lv;
+    private InitAdapter adapter;
 
-    private List<Object> items = new ArrayList<>();
 
-    public InitDialog(@NonNull Context context) {
+    public InitDialog(@NonNull Context context, List<AbsIniter> items) {
         super(context);
-
+        this.items = items;
         findView();
     }
+
+
 
     void findView(){
         initDialogSize();
         View v = View.inflate(getContext(), R.layout.dialog_init, null);
 
-        recyv = v.findViewById(R.id.init_recyv);
-        configAdapter();
-        v.findViewById(R.id.init_cancle).setOnClickListener(this);
+        lv = v.findViewById(R.id.init_lv);
+
+        v.findViewById(R.id.init_btn_cancle).setOnClickListener(this);
         setContentView(v);
+
+        setAdapter();
     }
 
     private void initDialogSize() {
@@ -54,17 +62,21 @@ public class InitDialog extends Dialog implements View.OnClickListener {
         dialogWindow.setAttributes(lp);
     }
 
-    private void configAdapter(){
-        recyv.setLayoutManager(
-                new StaggeredGridLayoutManager(
-                        1,
-                        StaggeredGridLayoutManager.VERTICAL));
-
-
+    private void setAdapter(){
+        adapter = new InitAdapter(items);
+        lv.setAdapter(adapter);
     }
+
+
 
     @Override
     public void onClick(View v) {
 
+    }
+
+    public void notifyDataSetChange(){
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
     }
 }

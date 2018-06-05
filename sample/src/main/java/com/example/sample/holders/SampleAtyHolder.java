@@ -9,7 +9,7 @@ import com.example.apphelper.AppHelper;
 import com.example.sample.R;
 
 
-public class SampleAtyHolder extends ViewHoder<Class<? extends Activity>> {
+public class SampleAtyHolder extends ViewHolder<Class<? extends Activity>> {
 
     private TextView mTv;
 

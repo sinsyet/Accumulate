@@ -1,37 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_margin="10dp">
 
     <LinearLayout
-        android:background="#88FFFFFF"
-        android:padding="5dp"
-        android:orientation="vertical"
         android:layout_width="600dp"
-        android:layout_height="800dp">
+        android:layout_height="480dp"
+        android:background="@drawable/init_basebg"
+        android:orientation="vertical"
+        android:padding="10dp">
 
         <TextView
-            android:text="正在初始化"
-            android:textSize="20sp"
-            android:textStyle="bold"
             android:layout_width="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:textSize="20dp"
+            android:text="设备初始化中, 请稍后..." />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/init_recyv"
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="1dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp" />
 
-        <Button
-            android:id="@+id/init_cancle"
-            android:layout_gravity="center_horizontal"
-            android:background="@android:color/transparent"
-            android:textColor="@color/colorAccent"
-            android:text="close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/init_tv_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="正在初始化中...15%(12/30)" />
 
+        <ProgressBar
+            android:id="@+id/init_pb"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:progress="30" />
+
+        <ListView
+            android:id="@+id/init_lv"
+            android:layout_width="match_parent"
+            android:layout_height="280dp"
+            android:background="#FFFFFF"
+            android:layout_margin="10dp"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/init_btn_cancle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="取消" />
+        </FrameLayout>
     </LinearLayout>
 
-</FrameLayout>
+
+</LinearLayout>

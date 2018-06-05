@@ -25,6 +25,7 @@ import com.example.sample.async.initer.GetGZCardIniter;
 import com.example.sample.async.initer.GetGZDeviceInfoIniter;
 import com.example.sample.async.initer.GetUserIdentityIniter;
 import com.example.sample.async.initer.GetUserinfoIniter;
+import com.example.sample.dialogs.InitDialog;
 import com.example.sample.initers.GetFaceIniter;
 
 
@@ -36,6 +37,7 @@ public class InitFragment extends Fragment implements View.OnClickListener, Simp
     private static final String TAG = "InitFragment";
     private SimpleLoadingDialog dialog;
     private AsyncEventSession<AbsInitQueue, AbsIniter> initSession;
+    private InitDialog initDialog;
 
     @Nullable
     @Override
@@ -66,6 +68,7 @@ public class InitFragment extends Fragment implements View.OnClickListener, Simp
         }
     }
 
+    private List<AbsIniter> items = new ArrayList<>();
     private void init_xj_gz() {
 
         AsyncEventSession<AbsInitQueue, AbsIniter> session = new AsyncEventSession<>();
@@ -78,6 +81,9 @@ public class InitFragment extends Fragment implements View.OnClickListener, Simp
             @Override
             public void onStartSession(AsyncEventSession<AbsInitQueue, AbsIniter> session) {
                 Log.e(TAG, "onStartSession: ");
+                items.clear();
+                initDialog = new InitDialog(getActivity(), items);
+                initDialog.show();
             }
 
             @Override
@@ -87,6 +93,8 @@ public class InitFragment extends Fragment implements View.OnClickListener, Simp
 
             @Override
             public void onEventStart(AsyncEventSession<AbsInitQueue, AbsIniter> session, AbsIniter cur) {
+                items.add(cur);
+                initDialog.notifyDataSetChange();
                 Log.e(TAG, "onEventStart: ");
             }
 
@@ -127,6 +135,7 @@ public class InitFragment extends Fragment implements View.OnClickListener, Simp
         session.append(new AbsInitQueue(new GetUserIdentityIniter()));
 
         session.append(new AbsInitQueue(new GetBuildListIniter()));
+
         session.append(new AbsInitQueue(new GetCellListIniter(), new GetCardListIniter()));
 
         session.startSession(new AsyncEventCallback<AbsInitQueue, AbsIniter>() {

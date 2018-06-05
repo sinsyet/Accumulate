@@ -4,12 +4,12 @@ import android.content.Context;
 import android.view.View;
 
 
-public abstract class ViewHoder<T> {
+public abstract class ViewHolder<T> {
 
     private Context mCtx;
     protected View root;
 
-    public ViewHoder(Context ctx){
+    public ViewHolder(Context ctx){
         this.mCtx = ctx;
 
         root = onCreateView();
@@ -19,9 +19,7 @@ public abstract class ViewHoder<T> {
         onViewCreated(root);
     }
 
-    protected View onCreateView(){
-        return null;
-    }
+    protected abstract View onCreateView();
 
     protected void onViewCreated(View v){}
 
