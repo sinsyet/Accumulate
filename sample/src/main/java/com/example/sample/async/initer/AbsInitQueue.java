@@ -7,8 +7,8 @@ import java.util.List;
 
 public class AbsInitQueue extends AsyncEventQueue<AbsIniter> {
 
-    public AbsInitQueue(AbsIniter... initers) {
-        super(initers);
+    public AbsInitQueue(AbsIniter first, AbsIniter... initers) {
+        super(first,initers);
     }
 
     public AbsInitQueue(List<AbsIniter> initers) {

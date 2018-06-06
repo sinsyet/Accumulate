@@ -10,6 +10,10 @@ import com.example.apphelper.AppHelper;
  */
 public class GetBuildListIniter extends AbsIniter {
 
+    @Override
+    public Object getHintExtra() {
+        return "获取楼栋列表...";
+    }
 
     @Override
     protected void onInit() {
@@ -23,9 +27,13 @@ public class GetBuildListIniter extends AbsIniter {
         while (start + value > (cur = System.currentTimeMillis())) {
             SystemClock.sleep(AppHelper.randomInt(400) + 100);
             onProgress(value,cur-start);
+            if(!isCanContinute()){
+                onNext();
+                return;
+            }
         }
         onProgress(value,cur-start);
-        onNext();
+        onEventException(new NullPointerException("hahaha"));
     }
 
 }

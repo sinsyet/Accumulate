@@ -29,6 +29,12 @@ public class App {
         /*System.out.println(0.65D * 1.0f);*/
         System.out.println(100%3.0);
         System.out.println(Math.round(12.5));
+        System.out.println(Double.toHexString(12.5));
+        System.out.println(Float.toHexString(1.0f));
+        /*
+        0x1.9p3
+        0x1.0p0
+         */
     }
 
     private static void toHex(byte[] arr){

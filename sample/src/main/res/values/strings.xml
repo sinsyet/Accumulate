@@ -95,4 +95,6 @@
         DNS2:%s\n
     </string>
     <string name="action_settings">Settings</string>
+    <string name="init_success">初始化成功</string>
+    <string name="init_interrupt">取消初始化</string>
 </resources>

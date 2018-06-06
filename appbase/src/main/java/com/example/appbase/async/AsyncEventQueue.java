@@ -10,9 +10,9 @@ public class AsyncEventQueue<AsyncHandler extends AbsAsyncEvent> {
 
     private List<AsyncHandler> mQueue = new ArrayList<>();
     private int index;
-    public AsyncEventQueue(AsyncHandler... initers){
+    public AsyncEventQueue(AsyncHandler handler, AsyncHandler... initers){
 
-
+        mQueue.add(handler);
         mQueue.addAll(Arrays.asList(initers));
     }
 

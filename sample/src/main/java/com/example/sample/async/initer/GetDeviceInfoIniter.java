@@ -11,6 +11,11 @@ import com.example.apphelper.AppHelper;
 public class GetDeviceInfoIniter extends AbsIniter {
 
     @Override
+    public Object getHintExtra() {
+        return "获取设备配置信息...";
+    }
+
+    @Override
     protected void onInit() {
 
         long value = (AppHelper.randomInt(5) + 5) * 1000;
@@ -19,6 +24,10 @@ public class GetDeviceInfoIniter extends AbsIniter {
         while (start + value > (cur = System.currentTimeMillis())) {
             SystemClock.sleep(AppHelper.randomInt(400) + 100);
             onProgress(value,cur-start);
+            if(!isCanContinute()){
+                onNext();
+                return;
+            }
         }
         onProgress(value,cur-start);
         onNext();

@@ -35,6 +35,16 @@ public abstract class AbsIniter extends AbsAsyncEvent {
         return this.getClass().getSimpleName();
     }
 
+    private Object mFailExtra;
+    public Object getFailExtra(){
+        return mInitState == STATE_FAIL ? mFailExtra : null;
+    }
+
+    private Throwable mThrowable;
+    public Throwable getThrowableExtra(){
+        return mInitState == STATE_EXCEPTION ? mThrowable : null;
+    }
+
     @Override
     protected final void onHandleEvent() {
         mStartMillis = System.currentTimeMillis();
@@ -55,15 +65,17 @@ public abstract class AbsIniter extends AbsAsyncEvent {
     }
 
     @Override
-    protected void onEventException(Throwable t) {
-        super.onEventException(t);
+    protected final void onEventException(Throwable t) {
         mInitState = STATE_EXCEPTION;
+        mThrowable = t;
+        super.onEventException(t);
     }
 
     @Override
-    protected void onEventFail(int code) {
-        super.onEventFail(code);
+    protected final void onEventFail(int code) {
+        mFailExtra = code;
         mInitState = STATE_FAIL;
+        super.onEventFail(code);
     }
 
     @Override

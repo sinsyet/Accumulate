@@ -9,40 +9,112 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.appbase.async.AbsAsyncEvent;
 import com.example.appbase.async.AsyncEventCallback;
-import com.example.appbase.async.AsyncEventQueue;
 import com.example.appbase.async.AsyncEventSession;
+import com.example.apphelper.ToastUtil;
 import com.example.sample.R;
-import com.example.sample.async.dialogs.SimpleLoadingDialog;
 import com.example.sample.async.initer.AbsInitQueue;
 import com.example.sample.async.initer.AbsIniter;
+import com.example.sample.async.initer.GetArcFaceInfoIniter;
 import com.example.sample.async.initer.GetBuildListIniter;
-import com.example.sample.async.initer.GetCardListIniter;
-import com.example.sample.async.initer.GetCellListIniter;
+import com.example.sample.async.initer.GetDoorCardListIniter;
 import com.example.sample.async.initer.GetDeviceInfoIniter;
 import com.example.sample.async.initer.GetGZCardIniter;
 import com.example.sample.async.initer.GetGZDeviceInfoIniter;
+import com.example.sample.async.initer.GetHouseListIniter;
 import com.example.sample.async.initer.GetUserIdentityIniter;
 import com.example.sample.async.initer.GetUserinfoIniter;
 import com.example.sample.dialogs.InitDialog;
-import com.example.sample.initers.GetFaceIniter;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class InitFragment extends Fragment implements View.OnClickListener, SimpleLoadingDialog.Callback {
+public class InitFragment extends Fragment implements View.OnClickListener{
     private static final String TAG = "InitFragment";
-    private SimpleLoadingDialog dialog;
-    private AsyncEventSession<AbsInitQueue, AbsIniter> initSession;
     private InitDialog initDialog;
+    private AsyncEventCallback<AbsInitQueue, AbsIniter> asynInitCallback = new AsyncEventCallback<AbsInitQueue, AbsIniter>() {
+        @Override
+        public void onStartSession(AsyncEventSession<AbsInitQueue, AbsIniter> session) {
+            items.clear();
+            initDialog = new InitDialog(getActivity(), items);
+            initDialog.setCallback(new InitDialog.Callback() {
+                @Override
+                public void onAction(int op) {
+                    switch (op) {
+                        case OP_INTERRUPT:
+                            session.interruptSession();
+                            initDialog.onInterrupt();
+                            break;
+                    }
+                }
+            });
+            initDialog.setCancelable(false);
+            initDialog.show();
+        }
 
+        @Override
+        public void onEndSession(AsyncEventSession<AbsInitQueue, AbsIniter> session, boolean success) {
+            if (success) {
+                initDialog.dismiss();
+                initDialog = null;
+                ToastUtil.show(getContext(), R.string.init_success);
+                items.clear();
+            } else {
+                int status = session.getStatus();
+                if (status == AsyncEventSession.Status.INTERRUPT) {
+                    initDialog.dismiss();
+                    initDialog = null;
+                    items.clear();
+                    ToastUtil.show(getContext(), R.string.init_interrupt);
+                } else {
+                    initDialog.onInitFail();
+                }
+            }
+            Log.e(TAG, "onEndSession: "+success);
+        }
+
+        @Override
+        public void onEventStart(AsyncEventSession<AbsInitQueue, AbsIniter> session, AbsIniter cur) {
+            items.add(cur);
+            initDialog.notifyDataSetChange();
+            int handledCount = session.getHandledCount();
+            int handledFailCount = session.getHandledFailCount();
+            int handledExceptionCount = session.getHandledExceptionCount();
+            initDialog.updateProgress(handledCount + handledFailCount + handledExceptionCount,
+                    session.getAsyncEventCount());
+        }
+
+        @Override
+        public void onEventEnd(AsyncEventSession<AbsInitQueue, AbsIniter> session, AbsIniter cur) {
+            initDialog.notifyDataSetChange();
+        }
+
+        @Override
+        public boolean onEventFail(AsyncEventSession<AbsInitQueue, AbsIniter> session, AbsIniter cur, Object extra) {
+            return false;
+        }
+
+        @Override
+        public boolean onEventException(AsyncEventSession<AbsInitQueue, AbsIniter> session, AbsIniter cur, Throwable t) {
+            return false;
+        }
+
+        @Override
+        public void onEventQueueStart(AsyncEventSession<AbsInitQueue, AbsIniter> session, AbsInitQueue queue) {
+
+        }
+
+        @Override
+        public void onEventQueueEnd(AsyncEventSession<AbsInitQueue, AbsIniter> session, AbsInitQueue queue) {
+            initDialog.notifyDataSetChange();
+        }
+    };
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_init,null);
+        return inflater.inflate(R.layout.fragment_init, null);
     }
 
     @Override
@@ -51,7 +123,7 @@ public class InitFragment extends Fragment implements View.OnClickListener, Simp
         findView(view);
     }
 
-    void findView(View v){
+    void findView(View v) {
         v.findViewById(R.id.init_btn_main).setOnClickListener(this);
         v.findViewById(R.id.init_btn_main_ajb).setOnClickListener(this);
         v.findViewById(R.id.init_btn_xj_zr).setOnClickListener(this);
@@ -61,302 +133,83 @@ public class InitFragment extends Fragment implements View.OnClickListener, Simp
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.init_btn_main:     init_main();       break;
-            case R.id.init_btn_main_ajb: init_main_ajb();   break;
-            case R.id.init_btn_xj_zr:    init_xj_zr();      break;
-            case R.id.init_btn_xj_gz:    init_xj_gz();      break;
+            case R.id.init_btn_main:
+                init_main();
+                break;
+            case R.id.init_btn_main_ajb:
+                init_main_ajb();
+                break;
+            case R.id.init_btn_xj_zr:
+                init_xj_zr();
+                break;
+            case R.id.init_btn_xj_gz:
+                init_xj_gz();
+                break;
         }
     }
 
     private List<AbsIniter> items = new ArrayList<>();
+
     private void init_xj_gz() {
-
-        AsyncEventSession<AbsInitQueue, AbsIniter> session = new AsyncEventSession<>();
-
-        session.append(new AbsInitQueue(new GetGZDeviceInfoIniter()));
-
-        session.append(new AbsInitQueue(new GetGZCardIniter()));
-
-        session.startSession(new AsyncEventCallback<AbsInitQueue, AbsIniter>() {
-            @Override
-            public void onStartSession(AsyncEventSession<AbsInitQueue, AbsIniter> session) {
-                Log.e(TAG, "onStartSession: ");
-                items.clear();
-                initDialog = new InitDialog(getActivity(), items);
-                initDialog.show();
-            }
-
-            @Override
-            public void onEndSession(AsyncEventSession<AbsInitQueue, AbsIniter> session, boolean success) {
-                Log.e(TAG, "onEndSession: ");
-            }
-
-            @Override
-            public void onEventStart(AsyncEventSession<AbsInitQueue, AbsIniter> session, AbsIniter cur) {
-                items.add(cur);
-                initDialog.notifyDataSetChange();
-                Log.e(TAG, "onEventStart: ");
-            }
-
-            @Override
-            public void onEventEnd(AsyncEventSession<AbsInitQueue, AbsIniter> session, AbsIniter cur) {
-                Log.e(TAG, "onEventEnd: ");
-            }
-
-            @Override
-            public boolean onEventFail(AsyncEventSession<AbsInitQueue, AbsIniter> session, AbsIniter cur, Object extra) {
-                Log.e(TAG, "onEventFail: ");
-                return false;
-            }
-
-            @Override
-            public boolean onEventException(AsyncEventSession<AbsInitQueue, AbsIniter> session, AbsIniter cur, Throwable t) {
-                Log.e(TAG, "onEventException: ");
-                return false;
-            }
-
-            @Override
-            public void onEventQueueStart(AsyncEventSession<AbsInitQueue, AbsIniter> session, AbsInitQueue queue) {
-                Log.e(TAG, "onEventQueueStart: ");
-            }
-
-            @Override
-            public void onEventQueueEnd(AsyncEventSession<AbsInitQueue, AbsIniter> session, AbsInitQueue queue) {
-                Log.e(TAG, "onEventQueueEnd: ");
-            }
-        });
+        initFromGZServer(0);
     }
 
     private void init_xj_zr() {
-        AsyncEventSession<AbsInitQueue, AbsIniter> session = new AsyncEventSession<>();
-
-        session.append(new AbsInitQueue(new GetDeviceInfoIniter()));
-
-        session.append(new AbsInitQueue(new GetUserIdentityIniter()));
-
-        session.append(new AbsInitQueue(new GetBuildListIniter()));
-
-        session.append(new AbsInitQueue(new GetCellListIniter(), new GetCardListIniter()));
-
-        session.startSession(new AsyncEventCallback<AbsInitQueue, AbsIniter>() {
-            @Override
-            public void onStartSession(AsyncEventSession<AbsInitQueue, AbsIniter> session) {
-                Log.e(TAG, "onStartSession: ");
-            }
-
-            @Override
-            public void onEndSession(AsyncEventSession<AbsInitQueue, AbsIniter> session, boolean success) {
-                Log.e(TAG, "onEndSession: ");
-            }
-
-            @Override
-            public void onEventStart(AsyncEventSession<AbsInitQueue, AbsIniter> session, AbsIniter cur) {
-                Log.e(TAG, "onEventStart: ");
-            }
-
-            @Override
-            public void onEventEnd(AsyncEventSession<AbsInitQueue, AbsIniter> session, AbsIniter cur) {
-                Log.e(TAG, "onEventEnd: ");
-            }
-
-            @Override
-            public boolean onEventFail(AsyncEventSession<AbsInitQueue, AbsIniter> session, AbsIniter cur, Object extra) {
-                Log.e(TAG, "onEventFail: ");
-                return false;
-            }
-
-            @Override
-            public boolean onEventException(AsyncEventSession<AbsInitQueue, AbsIniter> session, AbsIniter cur, Throwable t) {
-                Log.e(TAG, "onEventException: ");
-                return false;
-            }
-
-            @Override
-            public void onEventQueueStart(AsyncEventSession<AbsInitQueue, AbsIniter> session, AbsInitQueue queue) {
-                Log.e(TAG, "onEventQueueStart: ");
-            }
-
-            @Override
-            public void onEventQueueEnd(AsyncEventSession<AbsInitQueue, AbsIniter> session, AbsInitQueue queue) {
-                Log.e(TAG, "onEventQueueEnd: ");
-            }
-        });
+        initFromZZWServer(1);
     }
 
     private void init_main_ajb() {
-        AsyncEventSession<AbsInitQueue, AbsIniter> initSession = new AsyncEventSession<>();
-
-        // 初始化第一步: 获取设备初始化信息
-        final AbsInitQueue first = new AbsInitQueue(new GetDeviceInfoIniter());
-        initSession.append(first);
-
-        // 初始化第二步: 获取楼栋列表
-        AbsInitQueue second = new AbsInitQueue(new GetBuildListIniter());
-        initSession.append(second);
-
-        // 初始化第三步: 获取单元信息, 门卡列表
-        final AbsInitQueue thrid = new AbsInitQueue(new GetCellListIniter(), new GetCardListIniter());
-        initSession.append(thrid);
-
-        initSession.startSession(new AsyncEventCallback<AbsInitQueue,AbsIniter>() {
-            @Override
-            public void onStartSession( AsyncEventSession<AbsInitQueue,AbsIniter> session) {
-                showLoadingDialog();
-                Log.e(TAG, "onStartSession: ");
-            }
-
-            @Override
-            public void onEndSession( AsyncEventSession<AbsInitQueue,AbsIniter> session, boolean success) {
-                if (dialog != null) {
-                    dialog.dismiss();
-                    dialog = null;
-                }
-                Log.e(TAG, "onEndSession: "+success+" // "+session.getStatus());
-            }
-
-            @Override
-            public void onEventStart( AsyncEventSession<AbsInitQueue,AbsIniter> session, AbsIniter cur) {
-                initer.add(cur);
-                dialog.notifyDataSetChanged();
-                Log.e(TAG, "onEventStart: "+cur.getHintExtra());
-            }
-
-            @Override
-            public void onEventEnd( AsyncEventSession<AbsInitQueue,AbsIniter> session, AbsIniter cur) {
-                Log.e(TAG, "onEventEnd: "+cur.getHintExtra()+"\n"
-
-                        + session.getHandledCount() + " // "+session.getHandledFailCount()+" // "
-                        +session.getHandledExceptionCount() + " // "+session.getAsyncEventCount());
-
-                initer.remove(cur);
-                // dialog.notifyDataSetChanged();
-            }
-
-            @Override
-            public boolean onEventFail( AsyncEventSession<AbsInitQueue,AbsIniter> session, AbsIniter cur, Object extra) {
-                return false;
-            }
-
-            @Override
-            public boolean onEventException( AsyncEventSession<AbsInitQueue,AbsIniter> session, AbsIniter cur, Throwable t) {
-                return false;
-            }
-
-            @Override
-            public void onEventQueueStart( AsyncEventSession<AbsInitQueue,AbsIniter> session, AbsInitQueue queue) {
-                /*
-                例如:
-                可以判断queue是不是
-                 */
-                if(queue == thrid){
-                    queue.add(new GetUserinfoIniter());
-                }
-            }
-
-            @Override
-            public void onEventQueueEnd( AsyncEventSession<AbsInitQueue,AbsIniter> session, AbsInitQueue queue) {
-                if(queue == first){
-                    session.insertEventQueue(new AbsInitQueue(new GetBuildListIniter()));
-                }
-                int asyncEventCount = session.getAsyncEventCount();
-                int handledCount = session.getHandledCount();
-                Log.e(TAG, "onEventQueueEnd: "+asyncEventCount+" // "+handledCount);
-            }
-        });
+        initFromZZWServer(1);
     }
 
     private void init_main() {
-        initSession = new AsyncEventSession<>();
-
-        // 初始化第一步: 获取设备初始化信息
-        final AbsInitQueue first = new AbsInitQueue(new GetDeviceInfoIniter());
-        initSession.append(first);
-
-        // 初始化第二步: 获取楼栋列表
-       /* AbsInitQueue second = new AbsInitQueue(new GetBuildListIniter());
-        initSession.append(second);*/
-
-        // 初始化第三步: 获取单元信息, 门卡列表
-        final AbsInitQueue thrid = new AbsInitQueue(new GetCellListIniter(), new GetCardListIniter());
-        initSession.append(thrid);
-
-        initSession.startSession(new AsyncEventCallback<AbsInitQueue,AbsIniter>() {
-            @Override
-            public void onStartSession( AsyncEventSession<AbsInitQueue,AbsIniter> session) {
-                showLoadingDialog();
-                Log.e(TAG, "onStartSession: ");
-            }
-
-            @Override
-            public void onEndSession( AsyncEventSession<AbsInitQueue,AbsIniter> session, boolean success) {
-                if (dialog != null) {
-                    dialog.dismiss();
-                    dialog = null;
-                }
-                Log.e(TAG, "onEndSession: "+success+" // "+session.getStatus());
-                initSession = null;
-            }
-
-            @Override
-            public void onEventStart( AsyncEventSession<AbsInitQueue,AbsIniter> session, AbsIniter cur) {
-                initer.add(cur);
-                dialog.notifyDataSetChanged();
-                Log.e(TAG, "onEventStart: "+cur.getHintExtra());
-            }
-
-            @Override
-            public void onEventEnd( AsyncEventSession<AbsInitQueue,AbsIniter> session, AbsIniter cur) {
-                Log.e(TAG, "onEventEnd: "+cur.getHintExtra()+"\n"
-
-                        + session.getHandledCount() + " // "+session.getHandledFailCount()+" // "
-                +session.getHandledExceptionCount() + " // "+session.getAsyncEventCount());
-
-                initer.remove(cur);
-                // dialog.notifyDataSetChanged();
-            }
-
-            @Override
-            public boolean onEventFail( AsyncEventSession<AbsInitQueue,AbsIniter> session, AbsIniter cur, Object extra) {
-                return false;
-            }
-
-            @Override
-            public boolean onEventException( AsyncEventSession<AbsInitQueue,AbsIniter> session, AbsIniter cur, Throwable t) {
-                return false;
-            }
-
-            @Override
-            public void onEventQueueStart( AsyncEventSession<AbsInitQueue,AbsIniter> session, AbsInitQueue queue) {
-                /*
-                例如:
-                可以判断queue是不是
-                 */
-                if(queue == thrid){
-                    queue.add(new GetUserinfoIniter());
-                }
-            }
-
-            @Override
-            public void onEventQueueEnd( AsyncEventSession<AbsInitQueue,AbsIniter> session, AbsInitQueue queue) {
-                if(queue == first){
-                    session.insertEventQueue(new AbsInitQueue(new GetBuildListIniter()));
-                }
-                int asyncEventCount = session.getAsyncEventCount();
-                int handledCount = session.getHandledCount();
-                Log.e(TAG, "onEventQueueEnd: "+asyncEventCount+" // "+handledCount);
-            }
-        });
-    }
-    List<AbsIniter> initer = new ArrayList<AbsIniter>();
-    private void showLoadingDialog(){
-        dialog = new SimpleLoadingDialog(getActivity(), initer, this);
-        dialog.show();
+        initFromZZWServer(1);
     }
 
-    @Override
-    public void onCancle() {
-        if (initSession != null) {
-            initSession.interruptSession();
-        }
+    /**
+     *
+     * @param type 类型; 0, 主线机型-门口机; 1, 主线机型-围墙机;
+     */
+    private void initFromZZWServer(int type){
+        // 创建一个异步事件会话; 泛型AbsInitQueue是初始化者池类型, 泛型AbsIniter初始化者
+        AsyncEventSession<AbsInitQueue, AbsIniter> session = new AsyncEventSession<>();
+
+        // 往异步事件会话中追加一个初始化者池;
+            // 它包裹了一个初始化任务: 初始化设备信息
+        session.append(new AbsInitQueue(new GetDeviceInfoIniter()));
+
+        // 再追加一个初始化任务池; 初始化房间列表
+        session.append(new AbsInitQueue(new GetBuildListIniter()));
+
+        // 再追加一个初始化任务池, 里面包含了
+        session.append(new AbsInitQueue(
+                new GetDoorCardListIniter(),    // 获取门卡列表
+                new GetHouseListIniter(),       // 获取房间列表
+                new GetArcFaceInfoIniter(),     // 获取虹软离线人脸数据列表
+                new GetDoorCardListIniter(),    // 获取
+                new GetUserinfoIniter(),        // 获取住户信息列表 (AJB机型才需要获取, 建议在Initer对象
+                                                // 里自己做判断是否需要更新, 不需要更新则调用onNext结束更新即可)
+                new GetUserIdentityIniter()     // 更新住户身份信息,HR机型需要更新, 同上, 内部自己做判断是否需要更新
+                ));
+
+        session.startSession(asynInitCallback);
+    }
+
+    /**
+     *
+     * @param type 类型; 0, 主线机型-门口机; 1, 主线机型-围墙机;
+     */
+    private void initFromGZServer(int type){
+        // 创建一个异步事件会话; 泛型AbsInitQueue是初始化者池类型, 泛型AbsIniter初始化者
+        AsyncEventSession<AbsInitQueue, AbsIniter> session = new AsyncEventSession<>();
+
+        // 往异步事件会话中追加一个初始化者池;
+        // 它包裹了一个初始化任务: 初始化设备信息
+        session.append(new AbsInitQueue(new GetGZDeviceInfoIniter()));
+
+        // 再追加一个初始化任务池; 初始化房间列表
+        session.append(new AbsInitQueue(new GetGZCardIniter()));
+
+        session.startSession(asynInitCallback);
     }
 }

@@ -6,24 +6,28 @@
     android:layout_margin="10dp">
 
     <LinearLayout
-        android:layout_width="600dp"
-        android:layout_height="480dp"
+        android:layout_width="700dp"
+        android:layout_height="520dp"
         android:background="@drawable/init_basebg"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:paddingBottom="20dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="20dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="设备初始化"
             android:textColor="#000000"
             android:textSize="20dp"
-            android:text="设备初始化中, 请稍后..." />
+            android:textStyle="bold" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp" />
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp" />
 
         <TextView
             android:id="@+id/init_tv_desc"
@@ -36,37 +40,82 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:progress="30" />
+            android:progress="0" />
 
         <ListView
+            android:divider="@null"
             android:id="@+id/init_lv"
             android:layout_width="match_parent"
-            android:layout_height="280dp"
+            android:layout_height="340dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
             android:background="#FFFFFF"
-            android:layout_margin="10dp"
-            />
+            android:padding="5dp" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp" />
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp" />
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <Button
-                android:id="@+id/init_btn_cancle"
+                android:id="@+id/init_btn_interrupt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
-                android:background="@android:color/transparent"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/btn_bg2"
                 android:gravity="center"
-                android:padding="5dp"
-                android:text="取消" />
+                android:padding="3dp"
+                android:text="取消"
+                android:visibility="visible" />
+
+            <LinearLayout
+                android:visibility="invisible"
+                android:id="@+id/init_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:id="@+id/button"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                     >
+                    <Button
+                        android:id="@+id/init_btn_enter"
+                        android:background="@android:color/transparent"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:layout_gravity="center"
+                        android:text="确定"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/button2"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:id="@+id/init_btn_cancle2"
+                        android:background="@android:color/transparent"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:layout_gravity="center"
+                        android:text="取消"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </FrameLayout>
+
+            </LinearLayout>
         </FrameLayout>
     </LinearLayout>
 

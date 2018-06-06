@@ -6,17 +6,19 @@ import com.example.apphelper.AppHelper;
 
 
 /**
- * 获取单元列表
+ * 获取卡列表
  */
-public class GetCellListIniter extends AbsIniter {
+public class GetDoorCardListIniter extends AbsIniter {
     @Override
     public Object getHintExtra() {
-        return "获取小区住户单元列表...";
+        return "获取小区住户门卡列表...";
     }
-
     @Override
     protected void onInit() {
+
+        // 设置初始化类型为可以获取进度的类型
         setInitType(TYPE_PROGRESS);
+
         long value = (AppHelper.randomInt(5) + 5) * 1000;
         long start = System.currentTimeMillis();
         long cur = 0;
@@ -29,6 +31,6 @@ public class GetCellListIniter extends AbsIniter {
             }
         }
         onProgress(value,cur-start);
-        onNext();
+        onEventFail(404);
     }
 }

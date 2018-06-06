@@ -25,7 +25,7 @@ public class AsyncEventSession<EventQueue extends AsyncEventQueue<AsyncHandler>,
 
     private Handler mHandler;
 
-    interface Status {
+    public interface Status {
 
         int INVALID = -1;
         int RUNNING = 0;

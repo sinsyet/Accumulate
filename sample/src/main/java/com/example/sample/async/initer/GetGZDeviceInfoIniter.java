@@ -11,7 +11,10 @@ public class GetGZDeviceInfoIniter extends AbsIniter {
     protected void onInit() {
 
         SystemClock.sleep(5 * 1000);
-
+        if(!isCanContinute()){
+            onNext();
+            return;
+        }
         onNext();
     }
 }

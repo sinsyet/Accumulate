@@ -18,6 +18,10 @@ public class GetGZCardIniter extends AbsIniter {
         while (start + value > (cur = System.currentTimeMillis())) {
             SystemClock.sleep(AppHelper.randomInt(400) + 100);
             onProgress(value,cur-start);
+            if(!isCanContinute()){
+                onNext();
+                return;
+            }
         }
         Log.e(TAG, "onInit: "+(cur-start));
         onProgress(value,cur-start);
