@@ -51,6 +51,7 @@ public class SampleActivity extends AppCompatActivity implements AdapterView.OnI
         mAtys.add(RippleActivity.class);
         mAtys.add(PullToZoomActivity.class);
         mAtys.add(PTZSampleActivity.class);
+        mAtys.add(DouYinActivity.class);
     }
 
     @Override

@@ -57,7 +57,9 @@
         <activity
             android:name=".activities.PTZSampleActivity"
             android:theme="@style/ImageTranslucentTheme" />
-        <activity android:name=".activities.DouYinActivity"></activity>
+        <activity android:name=".activities.DouYinActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            ></activity>
     </application>
 
 </manifest>

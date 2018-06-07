@@ -1,9 +1,181 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.DouYinActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <VideoView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_marginTop="45dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_centerInParent="true"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="@string/recommend"
+                    style="@style/base_tv" />
+
+                <TextView
+                    style="@style/base_tv"
+                    android:text="@string/near"
+                    />
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_marginRight="10dp"
+                android:src="@mipmap/ic_search"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            >
+
+            <FrameLayout
+                android:layout_gravity="center"
+                android:layout_width="200dp"
+                android:layout_height="200dp" >
+                <ImageView
+                    android:tint="@android:color/darker_gray"
+                    android:layout_gravity="center"
+                    android:src="@mipmap/ic_play"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:gravity="center_horizontal"
+                android:layout_marginRight="10dp"
+                android:layout_gravity="center_vertical|right"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="70dp"
+                    android:layout_height="70dp">
+                    <com.github.siyamed.shapeimageview.mask.PorterShapeImageView
+                        android:layout_margin="10dp"
+                        android:src="@mipmap/img_portrait"
+                        android:layout_width="match_parent"
+                        app:siSquare="true"
+                        app:siShape="@drawable/shape_circle"
+                        android:layout_height="match_parent" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:background="@drawable/circle_big_red"
+                        android:src="@mipmap/add_icon"
+                        android:tint="@android:color/white"
+                        android:scaleType="centerInside"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        />
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:drawableTop="@mipmap/heart_icon"
+                    android:layout_marginTop="16dp"
+                    android:text="1.6w"
+                    android:textColor="@android:color/white"
+                    android:gravity="center"
+                    />
+                <TextView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:drawableTop="@mipmap/msg_icon"
+                    android:layout_marginTop="16dp"
+                    android:text="1.6w"
+                    android:textColor="@android:color/white"
+                    android:gravity="center"
+                    />
+                <TextView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:drawableTop="@mipmap/share_icon"
+                    android:layout_marginTop="16dp"
+                    android:text="1.6w"
+                    android:textColor="@android:color/white"
+                    android:gravity="center"
+                    />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/white"
+            />
+
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:gravity="center"
+                android:layout_weight="1"
+                style="@style/base_tv"
+                android:text="首页"
+                />
+
+            <TextView
+                android:gravity="center"
+                android:layout_weight="1"
+                style="@style/base_tv"
+                android:text="关注"
+                />
+
+            <ImageView
+                android:layout_marginLeft="5dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="5dp"
+                android:src="@mipmap/ic_add_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:gravity="center"
+                android:layout_weight="1"
+                style="@style/base_tv"
+                android:text="消息"
+                />
+
+            <TextView
+                android:layout_weight="1"
+                android:gravity="center"
+                style="@style/base_tv"
+                android:text="我的"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
