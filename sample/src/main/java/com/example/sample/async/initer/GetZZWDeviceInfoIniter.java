@@ -8,7 +8,7 @@ import com.example.apphelper.AppHelper;
 /**
  * 获取设备信息
  */
-public class GetDeviceInfoIniter extends AbsIniter {
+public class GetZZWDeviceInfoIniter extends AbsIniter {
 
     @Override
     public Object getHintExtra() {

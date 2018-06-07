@@ -18,12 +18,12 @@ import com.example.sample.async.initer.AbsIniter;
 import com.example.sample.async.initer.GetArcFaceInfoIniter;
 import com.example.sample.async.initer.GetBuildListIniter;
 import com.example.sample.async.initer.GetDoorCardListIniter;
-import com.example.sample.async.initer.GetDeviceInfoIniter;
 import com.example.sample.async.initer.GetGZCardIniter;
 import com.example.sample.async.initer.GetGZDeviceInfoIniter;
 import com.example.sample.async.initer.GetHouseListIniter;
 import com.example.sample.async.initer.GetUserIdentityIniter;
 import com.example.sample.async.initer.GetUserinfoIniter;
+import com.example.sample.async.initer.GetZZWDeviceInfoIniter;
 import com.example.sample.dialogs.InitDialog;
 
 
@@ -176,7 +176,7 @@ public class InitFragment extends Fragment implements View.OnClickListener{
 
         // 往异步事件会话中追加一个初始化者池;
             // 它包裹了一个初始化任务: 初始化设备信息
-        session.append(new AbsInitQueue(new GetDeviceInfoIniter()));
+        session.append(new AbsInitQueue(new GetZZWDeviceInfoIniter()));
 
         // 再追加一个初始化任务池; 初始化房间列表
         session.append(new AbsInitQueue(new GetBuildListIniter()));
