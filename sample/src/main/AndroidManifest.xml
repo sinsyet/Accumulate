@@ -54,9 +54,10 @@
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".RippleActivity" />
-        <activity android:name=".activities.PTZSampleActivity"
-            android:theme="@style/ImageTranslucentTheme"
-            />
+        <activity
+            android:name=".activities.PTZSampleActivity"
+            android:theme="@style/ImageTranslucentTheme" />
+        <activity android:name=".activities.DouYinActivity"></activity>
     </application>
 
 </manifest>
