@@ -7,11 +7,7 @@
     tools:context=".activities.DouYinActivity">
 
     <VideoView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <ImageView
-        android:src="@mipmap/img_video_1"
+        android:id="@+id/douyin_video"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -25,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <LinearLayout
+           <!-- <LinearLayout
                 android:layout_centerInParent="true"
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
@@ -40,7 +36,31 @@
                     android:text="@string/near"
                     />
 
-            </LinearLayout>
+            </LinearLayout>-->
+            <RadioGroup
+                android:id="@+id/douyin_rg"
+                android:layout_centerInParent="true"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/douyin_rb_recommend"
+                    android:button="@null"
+                    style="@style/base_tv"
+                    android:checked="true"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:text="@string/recommend"
+                    />
+
+                <RadioButton
+                    android:id="@+id/douyin_rb_near"
+                    android:button="@null"
+                    style="@style/base_tv"
+                    android:text="@string/near"
+                    />
+            </RadioGroup>
 
             <ImageView
                 android:layout_marginRight="10dp"
@@ -58,10 +78,12 @@
             >
 
             <FrameLayout
+                android:id="@+id/douyin_fl_player"
                 android:layout_gravity="center"
                 android:layout_width="200dp"
                 android:layout_height="200dp" >
                 <ImageView
+                    android:id="@+id/douyin_iv_arrow"
                     android:tint="@android:color/darker_gray"
                     android:layout_gravity="center"
                     android:src="@mipmap/ic_play"
@@ -81,7 +103,7 @@
                     android:layout_width="70dp"
                     android:layout_height="70dp">
                     <com.github.siyamed.shapeimageview.mask.PorterShapeImageView
-                        android:layout_margin="10dp"
+                        android:layout_margin="15dp"
                         android:src="@mipmap/img_portrait"
                         android:layout_width="match_parent"
                         app:siSquare="true"
@@ -128,6 +150,12 @@
                     android:gravity="center"
                     />
 
+                <com.example.sample.views.MusicDial
+                    android:id="@+id/douyin_musicDial"
+                    android:layout_marginTop="30dp"
+                    android:clipChildren="false"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"/>
             </LinearLayout>
 
         </FrameLayout>

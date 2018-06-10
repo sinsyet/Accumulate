@@ -58,8 +58,8 @@
             android:name=".activities.PTZSampleActivity"
             android:theme="@style/ImageTranslucentTheme" />
         <activity android:name=".activities.DouYinActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            ></activity>
+            android:theme="@style/douyin_Aty"
+            />
     </application>
 
 </manifest>
