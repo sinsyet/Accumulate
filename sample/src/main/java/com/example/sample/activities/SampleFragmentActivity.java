@@ -11,6 +11,7 @@ import android.view.View;
 import com.example.sample.R;
 import com.example.sample.adapters.FragmentRecyAdapter;
 import com.example.sample.fragments.SoundFragment;
+import com.example.sample.fragments.ThreadFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ public class SampleFragmentActivity extends AppCompatActivity {
     private void initRecyVAdapter(){
         List<Class<? extends Fragment>> fragmentList = new ArrayList<>();
         fragmentList.add(SoundFragment.class);
+        fragmentList.add(ThreadFragment.class);
         mRecy.setLayoutManager(new GridLayoutManager(getApplicationContext(),2));
         mRecy.setAdapter(new FragmentRecyAdapter(fragmentList));
     }
