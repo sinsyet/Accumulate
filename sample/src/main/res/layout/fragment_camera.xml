@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextureView
+        android:id="@+id/camera_displayer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ImageView
+        android:id="@+id/camera_iv_photo"
+        android:layout_gravity="right"
+        android:layout_margin="5dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
+
+    <TextView
+        android:id="@+id/camera_tv_desc"
+        android:layout_margin="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/camera_btn_switch"
+            android:textColor="#FFFFFF"
+            android:background="@android:color/transparent"
+            style="@style/base_btn"
+            android:text="switch"
+          />
+
+        <Button
+            android:id="@+id/camera_btn_capture"
+            android:textColor="#FFFFFF"
+            android:background="@android:color/transparent"
+            style="@style/base_btn"
+            android:text="capture"
+            />
+
+    </LinearLayout>
+</FrameLayout>

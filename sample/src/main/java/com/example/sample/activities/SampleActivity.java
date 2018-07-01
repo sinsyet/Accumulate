@@ -52,6 +52,7 @@ public class SampleActivity extends AppCompatActivity implements AdapterView.OnI
         mAtys.add(PullToZoomActivity.class);
         mAtys.add(PTZSampleActivity.class);
         mAtys.add(DouYinActivity.class);
+        mAtys.add(com.example.sample.activities.FaceActivity.class);
     }
 
     @Override
