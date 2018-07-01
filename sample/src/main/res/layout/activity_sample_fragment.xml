@@ -6,9 +6,8 @@
     android:layout_height="match_parent"
     tools:context="com.example.sample.activities.SampleFragmentActivity">
 
-    <fragment
-        android:id="@+id/sample_fragment"
-        android:name="com.example.sample.async.fragments.InitFragment"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/sample_fragment_rcyv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </FrameLayout>

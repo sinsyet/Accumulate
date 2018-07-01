@@ -57,12 +57,15 @@
         <activity
             android:name=".activities.PTZSampleActivity"
             android:theme="@style/ImageTranslucentTheme" />
+
         <activity android:name=".activities.DouYinActivity"
         android:theme="@style/douyin_Aty"
         />
 
         <activity android:name=".activities.FaceActivity"
             />
+
+        <activity android:name=".activities.FragmentWrapperActivity"></activity>
     </application>
 
 </manifest>
