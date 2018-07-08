@@ -9,4 +9,5 @@
     <string name="action_hide_head">Hide Head</string>
     <string name="action_disable_zoom">Disable Zoom</string>
     <string name="action_enable_zoom">Enable Zoom</string>
+    <string name="action_settings">Enable Zoom</string>
 </resources>

@@ -14,15 +14,17 @@ import com.example.apphelper.AppHelper;
 import com.example.sample.R;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.Executors;
 
-public class CameraActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener, SeekBar.OnSeekBarChangeListener {
+public class CameraActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener, SeekBar.OnSeekBarChangeListener, View.OnClickListener {
     private static final String TAG = "CameraActivity";
     private SeekBar mSbZoom;
     private TextureView mTrv;
     private SurfaceTexture mSurface;
     private Camera mCamera;
     private int mCurZoomProgress;
+    private List<String> supportedSceneModes;
 
 
     @Override
@@ -35,6 +37,7 @@ public class CameraActivity extends AppCompatActivity implements TextureView.Sur
     void findView(){
         mSbZoom = findViewById(R.id.camera_sb_zoom);
         mTrv = findViewById(R.id.camera_trv);
+        findViewById(R.id.camera_btn_scene).setOnClickListener(this);
 
         mTrv.setSurfaceTextureListener(this);
         mSbZoom.setOnSeekBarChangeListener(this);
@@ -43,10 +46,12 @@ public class CameraActivity extends AppCompatActivity implements TextureView.Sur
     private Runnable mOpenCamera = new Runnable() {
         @Override
         public void run() {
-            Camera camera = Camera.open(0);
+            Camera camera = Camera.open(1);
             camera.setDisplayOrientation(
                     AppHelper.getCameraDisplayRotation(CameraActivity.this,0));
             Camera.Parameters params = camera.getParameters();
+            supportedSceneModes = params.getSupportedSceneModes();
+            Log.e(TAG, "run: supportedSceneModes - "+supportedSceneModes.size());
             mCamera = camera;
             try {
                 mCamera.setPreviewTexture(mSurface);
@@ -91,9 +96,16 @@ public class CameraActivity extends AppCompatActivity implements TextureView.Sur
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         Camera.Parameters params = mCamera.getParameters();
-        int maxZoom = params.getMaxZoom();
-        params.setZoom((int) (maxZoom * (mCurZoomProgress  * 1.0f/ 100)));
+        /*int maxZoom = params.getMaxZoom();
+        params.setZoom((int) (maxZoom * (mCurZoomProgress  * 1.0f/ 100)));*/
+        int maxExposureCompensation = params.getMaxExposureCompensation();
+        params.setExposureCompensation(
+                (
+                        (int)
+                                ((maxExposureCompensation * 2) * (mCurZoomProgress  * 1.0f/ 100))
+                                - maxExposureCompensation));
         mCamera.setParameters(params);
+
     }
 
     @Override
@@ -110,5 +122,27 @@ public class CameraActivity extends AppCompatActivity implements TextureView.Sur
 
             mCamera = null;
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.camera_btn_scene: setScene(); break;
+        }
+    }
+
+    private int index;
+    private void setScene() {
+        if (mCamera == null) {
+            return;
+        }
+
+        Camera.Parameters params = mCamera.getParameters();
+        if(index >= supportedSceneModes.size()) index = 0;
+        String s = supportedSceneModes.get(index);
+        params.setSceneMode(s);
+        mCamera.setParameters(params);
+        Log.e(TAG, "setScene: "+s);
+        index ++;
     }
 }

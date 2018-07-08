@@ -3,21 +3,37 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Accumulate.iml" filepath="$PROJECT_DIR$/Accumulate.iml" />
+      <module fileurl="file://D:\document\github\Accumulate\Accumulate.iml" filepath="D:\document\github\Accumulate\Accumulate.iml" />
       <module fileurl="file://$PROJECT_DIR$/AndroidHttpServer/AndroidHttpServer.iml" filepath="$PROJECT_DIR$/AndroidHttpServer/AndroidHttpServer.iml" />
+      <module fileurl="file://D:\document\github\Accumulate\AndroidHttpServer\AndroidHttpServer.iml" filepath="D:\document\github\Accumulate\AndroidHttpServer\AndroidHttpServer.iml" />
       <module fileurl="file://$PROJECT_DIR$/DBLib/DBLib.iml" filepath="$PROJECT_DIR$/DBLib/DBLib.iml" />
+      <module fileurl="file://D:\document\github\Accumulate\DBLib\DBLib.iml" filepath="D:\document\github\Accumulate\DBLib\DBLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/JavaSample/JavaSample.iml" filepath="$PROJECT_DIR$/JavaSample/JavaSample.iml" />
+      <module fileurl="file://D:\document\github\Accumulate\JavaSample\JavaSample.iml" filepath="D:\document\github\Accumulate\JavaSample\JavaSample.iml" />
       <module fileurl="file://$PROJECT_DIR$/PullToZoomlibrary/PullToZoomlibrary.iml" filepath="$PROJECT_DIR$/PullToZoomlibrary/PullToZoomlibrary.iml" />
+      <module fileurl="file://D:\document\github\Accumulate\PullToZoomlibrary\PullToZoomlibrary.iml" filepath="D:\document\github\Accumulate\PullToZoomlibrary\PullToZoomlibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://D:\document\github\Accumulate\app\app.iml" filepath="D:\document\github\Accumulate\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/appbase/appbase.iml" filepath="$PROJECT_DIR$/appbase/appbase.iml" />
+      <module fileurl="file://D:\document\github\Accumulate\appbase\appbase.iml" filepath="D:\document\github\Accumulate\appbase\appbase.iml" />
       <module fileurl="file://$PROJECT_DIR$/apphelper/apphelper.iml" filepath="$PROJECT_DIR$/apphelper/apphelper.iml" />
+      <module fileurl="file://D:\document\github\Accumulate\apphelper\apphelper.iml" filepath="D:\document\github\Accumulate\apphelper\apphelper.iml" />
       <module fileurl="file://$PROJECT_DIR$/demo/demo.iml" filepath="$PROJECT_DIR$/demo/demo.iml" />
+      <module fileurl="file://D:\document\github\Accumulate\demo\demo.iml" filepath="D:\document\github\Accumulate\demo\demo.iml" />
       <module fileurl="file://$PROJECT_DIR$/facedemo/facedemo.iml" filepath="$PROJECT_DIR$/facedemo/facedemo.iml" />
+      <module fileurl="file://D:\document\github\Accumulate\facedemo\facedemo.iml" filepath="D:\document\github\Accumulate\facedemo\facedemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
+      <module fileurl="file://D:\document\github\Accumulate\library\library.iml" filepath="D:\document\github\Accumulate\library\library.iml" />
       <module fileurl="file://$PROJECT_DIR$/ndklib/ndklib.iml" filepath="$PROJECT_DIR$/ndklib/ndklib.iml" />
+      <module fileurl="file://D:\document\github\Accumulate\ndklib\ndklib.iml" filepath="D:\document\github\Accumulate\ndklib\ndklib.iml" />
       <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" />
+      <module fileurl="file://D:\document\github\Accumulate\sample\sample.iml" filepath="D:\document\github\Accumulate\sample\sample.iml" />
       <module fileurl="file://$PROJECT_DIR$/samplemodule/samplemodule.iml" filepath="$PROJECT_DIR$/samplemodule/samplemodule.iml" />
+      <module fileurl="file://D:\document\github\Accumulate\samplemodule\samplemodule.iml" filepath="D:\document\github\Accumulate\samplemodule\samplemodule.iml" />
       <module fileurl="file://$PROJECT_DIR$/viewlib/viewlib.iml" filepath="$PROJECT_DIR$/viewlib/viewlib.iml" />
+      <module fileurl="file://D:\document\github\Accumulate\viewlib\viewlib.iml" filepath="D:\document\github\Accumulate\viewlib\viewlib.iml" />
       <module fileurl="file://$PROJECT_DIR$/zzw/zzw.iml" filepath="$PROJECT_DIR$/zzw/zzw.iml" />
+      <module fileurl="file://D:\document\github\Accumulate\zzw\zzw.iml" filepath="D:\document\github\Accumulate\zzw\zzw.iml" />
     </modules>
   </component>
 </project>
